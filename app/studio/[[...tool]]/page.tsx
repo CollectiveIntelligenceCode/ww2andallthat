@@ -1,8 +1,7 @@
-import { NextStudio } from "next-sanity/studio";
-import config from "@/sanity/sanity.config";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
+// Sanity Studio embedded here once NEXT_PUBLIC_SANITY_PROJECT_ID is configured.
+// Until then, manage content at sanity.io dashboard.
 export default function StudioPage() {
-  return <NextStudio config={config} />;
+  redirect("https://sanity.io");
 }
