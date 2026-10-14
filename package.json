@@ -12,13 +12,17 @@
   },
   "dependencies": {
     "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^6.19.0",
     "next": "16.4.0",
     "next-sanity": "^13.3.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "rss-parser": "^3.13.0"
+    "rss-parser": "^3.13.0",
+    "sanity": "^6.19.0"
   },
-  "vitest": { "environment": "node" },
+  "vitest": {
+    "environment": "node"
+  },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
