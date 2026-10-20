@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import RankDisplay from "./RankDisplay";
 
 const LINKS = [
   { href: "/articles", label: "Articles" },
@@ -60,6 +61,7 @@ export default function Nav() {
               </Link>
             );
           })}
+          <RankDisplay />
         </div>
       </nav>
 

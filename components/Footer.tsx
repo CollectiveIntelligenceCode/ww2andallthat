@@ -23,6 +23,11 @@ export default function Footer() {
             <a href="https://james1940.substack.com" target="_blank" rel="noopener noreferrer"
               className="hover:text-[#D72638] transition-colors">Substack</a>
           </div>
+          <div className="flex flex-col gap-2.5">
+            <Link href="/subscribe" className="hover:text-[#D72638] transition-colors">Subscribe free</Link>
+            <Link href="/join" className="hover:text-[#D72638] transition-colors">Join paid</Link>
+            <Link href="/progress" className="hover:text-[#D72638] transition-colors">My campaign</Link>
+          </div>
         </div>
       </div>
       <div className="border-t border-[#E5E7EB]">

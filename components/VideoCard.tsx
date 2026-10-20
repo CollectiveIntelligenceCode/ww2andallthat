@@ -16,11 +16,11 @@ export default function VideoCard({ video, onClick }: { video: Video; onClick: (
           </div>
         </div>
       </div>
-      <h3 className="text-sm font-medium leading-snug text-[#1A1A18] group-hover:opacity-70 transition-opacity line-clamp-2">
+      <h3 className="text-sm font-[var(--font-baskerville)] font-bold leading-snug text-[#111111] group-hover:opacity-70 transition-opacity line-clamp-2">
         {video.title}
       </h3>
       {video.tags.length > 0 && (
-        <p className="text-xs text-[#1A1A18]/40 mt-1">{video.tags[0]}</p>
+        <p className="text-[10px] font-[var(--font-barlow)] tracking-widest uppercase text-[#9CA3AF] mt-1">{video.tags[0]}</p>
       )}
     </button>
   );

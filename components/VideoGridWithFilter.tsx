@@ -22,10 +22,10 @@ export default function VideoGridWithFilter({ videos }: { videos: Video[] }) {
         <div className="flex flex-wrap gap-2 mb-8">
           {allTags.map(tag => (
             <button key={tag} onClick={() => setFilter(tag)}
-              className={`px-3 py-1 text-xs rounded-sm border transition-colors ${
+              className={`px-3 py-1 text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase border transition-colors ${
                 filter === tag
-                  ? "bg-[#1A1A18] text-[#FAFAF8] border-[#1A1A18]"
-                  : "bg-transparent text-[#1A1A18]/60 border-black/[0.12] hover:border-[#1A1A18]/40"
+                  ? "bg-[#111111] text-white border-[#111111]"
+                  : "bg-transparent text-[#6B7280] border-[#E5E7EB] hover:border-[#111111] hover:text-[#111111]"
               }`}>
               {tag}
             </button>
