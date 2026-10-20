@@ -1,3 +1,17 @@
 @import "tailwindcss";
 
 * { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+/* Red underline — slides in from left on article title hover */
+.article-title-link {
+  background-image: linear-gradient(#D72638, #D72638);
+  background-size: 0% 2px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 280ms ease;
+}
+.article-title-link:hover {
+  background-size: 100% 2px;
+}

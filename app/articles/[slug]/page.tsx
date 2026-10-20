@@ -50,7 +50,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <p className="text-xs text-[#1A1A18]/30">{readingTime(post.excerpt)}</p>
             )}
           </div>
-          <h1 className="font-[var(--font-playfair)] text-4xl md:text-5xl font-semibold leading-tight mb-4">
+          <h1 className="font-[var(--font-baskerville)] text-4xl md:text-5xl font-bold leading-[1.15] mb-4 text-balance">
             {post.title}
           </h1>
           {post.excerpt && (

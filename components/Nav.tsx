@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
-// Podcast omitted from nav — page is phase 1.5 (pending RSS feed URL from Paul)
 const LINKS = [
   { href: "/articles", label: "Articles" },
   { href: "/videos", label: "Videos" },
@@ -10,44 +10,74 @@ const LINKS = [
   { href: "/events", label: "Events" },
 ];
 
+function todayLabel() {
+  return new Date().toLocaleDateString("en-GB", {
+    weekday: "long", day: "numeric", month: "long", year: "numeric",
+  });
+}
+
 export default function Nav() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
   return (
-    <nav className="sticky top-0 z-50 bg-[#FAFAF8] border-b border-black/[0.08]">
-      <div className="max-w-[1200px] mx-auto px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="font-[var(--font-playfair)] text-lg font-semibold tracking-tight text-[#1A1A18]">
-          WW2 &amp; All That
-        </Link>
-        <div className="hidden md:flex items-center gap-6">
-          {LINKS.map(l => (
-            <Link key={l.href} href={l.href}
-              className="text-sm text-[#1A1A18]/60 hover:text-[#1A1A18] transition-colors">
-              {l.label}
-            </Link>
-          ))}
-          <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
-            className="ml-2 px-4 py-1.5 text-sm font-medium bg-[#1A1A18] text-[#FAFAF8] rounded-sm hover:bg-[#1A1A18]/80 transition-colors">
-            Subscribe
-          </a>
+    <header className="sticky top-0 z-50 bg-white border-b-2 border-[#111111]">
+      {/* Masthead */}
+      <div className="border-b border-[#E5E7EB]">
+        <div className="max-w-[1200px] mx-auto px-6 py-3 flex items-center justify-between gap-4">
+          <span className="hidden md:block text-[11px] font-[var(--font-barlow)] font-medium tracking-widest uppercase text-[#9CA3AF] whitespace-nowrap">
+            {todayLabel()}
+          </span>
+          <Link href="/"
+            className="font-[var(--font-baskerville)] text-2xl md:text-[1.75rem] font-bold tracking-tight text-[#111111] text-center flex-1 md:flex-none leading-none">
+            WW2 &amp; All That
+          </Link>
+          <div className="flex items-center">
+            <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+              className="hidden md:inline-block px-4 py-1.5 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase bg-[#D72638] text-white hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
+              Subscribe
+            </a>
+            <button
+              className="md:hidden text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#6B7280] px-2 py-1"
+              onClick={() => setOpen(o => !o)}
+              aria-label={open ? "Close menu" : "Open menu"}>
+              {open ? "Close" : "Menu"}
+            </button>
+          </div>
         </div>
-        <button className="md:hidden text-sm text-[#1A1A18]/60" onClick={() => setOpen(o => !o)}>
-          {open ? "Close" : "Menu"}
-        </button>
       </div>
+
+      {/* Nav category strip */}
+      <nav aria-label="Main navigation" className="hidden md:block">
+        <div className="max-w-[1200px] mx-auto px-6 h-9 flex items-center gap-7">
+          {LINKS.map(l => {
+            const active = pathname === l.href || pathname.startsWith(l.href + "/");
+            return (
+              <Link key={l.href} href={l.href}
+                className={`text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase transition-colors
+                  ${active ? "text-[#D72638]" : "text-[#111111] hover:text-[#D72638]"}`}>
+                {l.label}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Mobile drawer */}
       {open && (
-        <div className="md:hidden border-t border-black/[0.06] bg-[#FAFAF8]">
+        <div className="md:hidden border-t border-[#E5E7EB] bg-white">
           {LINKS.map(l => (
             <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
-              className="block px-6 py-3 text-sm text-[#1A1A18]/70 border-b border-black/[0.04]">
+              className="block px-6 py-3 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#111111] border-b border-[#E5E7EB] hover:text-[#D72638] transition-colors">
               {l.label}
             </Link>
           ))}
           <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
-            className="block px-6 py-3 text-sm font-medium text-[#1A1A18]">
+            className="block px-6 py-3 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#D72638]">
             Subscribe →
           </a>
         </div>
       )}
-    </nav>
+    </header>
   );
 }

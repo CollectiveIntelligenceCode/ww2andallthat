@@ -32,9 +32,9 @@ export default async function EventsPage() {
   const past = events.filter(e => e.isPast);
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-10">
-      <header className="mb-10 pb-6 border-b border-black/[0.08]">
-        <p className="text-xs tracking-[0.18em] uppercase text-[#1A1A18]/40 mb-2">Appearances</p>
-        <h1 className="font-[var(--font-playfair)] text-4xl font-semibold">Events</h1>
+      <header className="mb-10 pb-4 border-b-2 border-[#111111]">
+        <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#9CA3AF] mb-2">Appearances</p>
+        <h1 className="font-[var(--font-baskerville)] text-4xl font-bold">Events</h1>
       </header>
       {upcoming.length > 0
         ? <section className="mb-12">{upcoming.map(e => <EventRow key={e._id} event={e} />)}</section>
