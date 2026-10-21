@@ -9,6 +9,7 @@ export interface Post {
   featured: boolean;
   tags: string[];
   coverImage?: string;
+  body?: string;
 }
 
 export interface Video {

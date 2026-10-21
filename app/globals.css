@@ -15,3 +15,103 @@ html { scroll-behavior: smooth; }
 .article-title-link:hover {
   background-size: 100% 2px;
 }
+
+/* Article body prose — styles rendered Substack HTML */
+.article-prose {
+  font-family: var(--font-lato), Georgia, serif;
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: #111111;
+}
+.article-prose p {
+  margin-bottom: 1.4em;
+}
+.article-prose h2 {
+  font-family: var(--font-baskerville), Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 2.2em;
+  margin-bottom: 0.6em;
+  color: #111111;
+}
+.article-prose h3 {
+  font-family: var(--font-baskerville), Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 1.8em;
+  margin-bottom: 0.5em;
+  color: #111111;
+}
+.article-prose h4 {
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 1.5em;
+  margin-bottom: 0.4em;
+  color: #6B7280;
+}
+.article-prose a {
+  color: #D72638;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.article-prose a:hover {
+  color: #B91C2C;
+}
+.article-prose ul {
+  list-style: disc;
+  padding-left: 1.6em;
+  margin-bottom: 1.4em;
+}
+.article-prose ol {
+  list-style: decimal;
+  padding-left: 1.6em;
+  margin-bottom: 1.4em;
+}
+.article-prose li {
+  margin-bottom: 0.4em;
+}
+.article-prose blockquote {
+  border-left: 3px solid #D72638;
+  padding-left: 1.2em;
+  margin: 1.8em 0;
+  color: #4B5563;
+  font-style: italic;
+}
+.article-prose blockquote p {
+  margin-bottom: 0;
+}
+.article-prose img {
+  width: 100%;
+  height: auto;
+  margin: 1.8em 0;
+}
+.article-prose hr {
+  border: none;
+  border-top: 1px solid #E5E7EB;
+  margin: 2.5em 0;
+}
+.article-prose strong {
+  font-weight: 700;
+}
+.article-prose em {
+  font-style: italic;
+}
+.article-prose figure {
+  margin: 1.8em 0;
+}
+.article-prose figcaption {
+  font-size: 0.8rem;
+  color: #9CA3AF;
+  margin-top: 0.5em;
+  font-family: var(--font-barlow), sans-serif;
+  letter-spacing: 0.03em;
+}
+/* Substack auto-generated subscribe CTA in paid teaser — hide it */
+.article-prose .paywall-cta,
+.article-prose [class*="subscribe"] {
+  display: none;
+}

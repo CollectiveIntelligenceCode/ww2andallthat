@@ -31,10 +31,18 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-[#E5E7EB]">
-        <div className="max-w-[1200px] mx-auto px-6 py-4">
+        <div className="max-w-[1200px] mx-auto px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <p className="text-[10px] font-[var(--font-barlow)] tracking-wide text-[#9CA3AF]">
             © {new Date().getFullYear()} James Holland WW2 Ltd
           </p>
+          <div className="flex gap-4">
+            <Link href="/privacy" className="text-[10px] font-[var(--font-barlow)] tracking-wide text-[#9CA3AF] hover:text-[#D72638] transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="text-[10px] font-[var(--font-barlow)] tracking-wide text-[#9CA3AF] hover:text-[#D72638] transition-colors">
+              Terms of Use
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

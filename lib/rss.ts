@@ -1,7 +1,12 @@
 import Parser from "rss-parser";
 
 const parser = new Parser({
-  customFields: { item: [["media:thumbnail", "mediaThumbnail"]] },
+  customFields: {
+    item: [
+      ["media:thumbnail", "mediaThumbnail"],
+      ["content:encoded", "contentEncoded"],
+    ],
+  },
 });
 
 export function extractYoutubeId(url: string): string | null {
@@ -12,11 +17,34 @@ export function extractYoutubeId(url: string): string | null {
   return null;
 }
 
+// Strip dangerous tags/attributes from Substack HTML before rendering
+export function sanitiseHtml(html: string): string {
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
+    .replace(/\son\w+="[^"]*"/gi, "")
+    .replace(/\son\w+='[^']*'/gi, "");
+}
+
+// Detect paid Substack articles: content is a short teaser followed by a subscribe prompt
+function detectPaid(contentEncoded: string): boolean {
+  const lower = contentEncoded.toLowerCase();
+  return (
+    lower.includes("subscribe to read") ||
+    lower.includes("this post is for paid subscribers") ||
+    lower.includes("this post is for paying subscribers") ||
+    lower.includes("paid subscribers only") ||
+    (contentEncoded.replace(/<[^>]+>/g, "").trim().length < 600)
+  );
+}
+
 export function normaliseSubstackItem(item: {
   title?: string;
   link?: string;
   pubDate?: string;
   contentSnippet?: string;
+  contentEncoded?: string;
   enclosure?: { url?: string };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
@@ -24,6 +52,9 @@ export function normaliseSubstackItem(item: {
   const url = item.link ?? "";
   const slugMatch = url.match(/\/p\/([^/?#]+)/);
   const slug = slugMatch?.[1] ?? url.split("/").pop() ?? "";
+  const rawContent = item.contentEncoded ?? item.content ?? "";
+  const isPaid = rawContent ? detectPaid(rawContent) : false;
+  const body = rawContent ? sanitiseHtml(rawContent) : undefined;
   return {
     title: item.title ?? "",
     slug,
@@ -31,9 +62,10 @@ export function normaliseSubstackItem(item: {
     publishedAt: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
     excerpt: item.contentSnippet?.slice(0, 280) ?? "",
     coverImage: item.enclosure?.url ?? item["media:thumbnail"]?.["$"]?.url ?? undefined,
-    isPaid: false,
+    isPaid,
     featured: false,
     tags: [] as string[],
+    body,
   };
 }
 

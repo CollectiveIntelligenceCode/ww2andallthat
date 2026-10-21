@@ -33,6 +33,7 @@ const getLiveSubstackPosts = unstable_cache(
       isPaid: item.isPaid,
       featured: i === 0,
       tags: item.tags,
+      body: item.body,
     }));
   },
   ["substack-posts"],
