@@ -1,6 +1,7 @@
 import { getLatestPosts } from "@/lib/sanity";
 import Link from "next/link";
 import type { Metadata } from "next";
+import FreeSubscribeForm from "@/components/FreeSubscribeForm";
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
@@ -45,13 +46,7 @@ export default async function SubscribePage() {
         <p className="text-sm font-[var(--font-lato)] text-[#9CA3AF] mb-8 max-w-xs mx-auto">
           Subscribe to get new pieces in your inbox the moment they publish.
         </p>
-        <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
-          className="inline-block px-8 py-3 bg-[#111111] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#D72638] transition-colors active:scale-[0.98]">
-          Subscribe free on Substack
-        </a>
-        <p className="text-[11px] font-[var(--font-barlow)] text-[#9CA3AF] tracking-wide mt-3">
-          Free forever. No card required.
-        </p>
+        <FreeSubscribeForm />
       </header>
 
       {/* Recent articles preview */}
@@ -110,10 +105,7 @@ export default async function SubscribePage() {
                 </li>
               ))}
             </ul>
-            <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
-              className="block text-center px-6 py-2.5 border-2 border-[#111111] text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#111111] hover:text-white transition-colors">
-              Subscribe free
-            </a>
+            <FreeSubscribeForm buttonLabel="Subscribe free" />
           </div>
 
           {/* Paid */}
