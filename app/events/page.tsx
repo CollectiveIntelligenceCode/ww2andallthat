@@ -1,6 +1,7 @@
 import { getEvents } from "@/lib/sanity";
 import type { SanityEvent } from "@/lib/types";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const revalidate = 3600;
 export const metadata: Metadata = { title: "Events" };
@@ -70,10 +71,10 @@ export default async function EventsPage() {
             <p className="text-sm font-[var(--font-lato)] text-[#6B7280] mb-4">
               Subscribe to be notified when new events are announced.
             </p>
-            <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+            <Link href="/subscribe"
               className="inline-block px-5 py-2 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase bg-[#111111] text-white hover:bg-[#D72638] transition-colors active:scale-[0.98]">
               Subscribe for updates
-            </a>
+            </Link>
           </div>
         )}
 

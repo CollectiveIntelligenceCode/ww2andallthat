@@ -12,10 +12,10 @@ export default function Footer() {
             History, analysis, and storytelling by James Holland.
             Read every article in full — free, on this site.
           </p>
-          <a href="https://james1940.substack.com" target="_blank" rel="noopener noreferrer"
+          <Link href="/subscribe"
             className="text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#D72638] hover:text-[#B91C2C] transition-colors">
-            James1940 on Substack →
-          </a>
+            Subscribe free →
+          </Link>
         </div>
         <div className="flex flex-wrap gap-12 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#6B7280]">
           <div className="flex flex-col gap-2.5">

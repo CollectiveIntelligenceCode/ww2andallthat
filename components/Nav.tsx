@@ -44,10 +44,10 @@ export default function Nav() {
                 <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </Link>
-            <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+            <Link href="/join"
               className="hidden md:inline-block px-4 py-1.5 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase bg-[#D72638] text-white hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
               Subscribe
-            </a>
+            </Link>
             <button
               className="md:hidden text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#6B7280] px-2 py-1"
               onClick={() => setOpen(o => !o)}
@@ -92,10 +92,10 @@ export default function Nav() {
             className="block px-6 py-3 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#111111] border-b border-[#E5E7EB] hover:text-[#D72638] transition-colors">
             My record
           </Link>
-          <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+          <Link href="/join" onClick={() => setOpen(false)}
             className="block px-6 py-3 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#D72638]">
             Subscribe →
-          </a>
+          </Link>
         </div>
       )}
     </header>

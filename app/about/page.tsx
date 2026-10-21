@@ -75,7 +75,7 @@ export default function AboutPage() {
               in the UK, bringing together historians, writers, and a public passionate about the past.
             </p>
 
-            <h2>The Substack</h2>
+            <h2>The newsletter</h2>
             <p>
               Free articles are published here in full, every week. A paid subscription unlocks
               the complete archive — every article and essay ever written, subscriber-only
@@ -84,10 +84,10 @@ export default function AboutPage() {
           </div>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-4">
-            <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+            <Link href="/subscribe"
               className="inline-block px-6 py-2.5 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
               Subscribe to the newsletter
-            </a>
+            </Link>
             <Link href="/articles"
               className="inline-block px-6 py-2.5 border border-[#E5E7EB] text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#6B7280] hover:border-[#111111] hover:text-[#111111] transition-colors">
               Read the articles
