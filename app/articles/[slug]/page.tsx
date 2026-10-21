@@ -7,8 +7,12 @@ import type { Metadata } from "next";
 export const revalidate = 1800;
 
 export async function generateStaticParams() {
-  const posts = await getLatestPosts(100);
-  return posts.map(p => ({ slug: p.slug.current }));
+  try {
+    const posts = await getLatestPosts(100);
+    return posts.map(p => ({ slug: p.slug.current }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

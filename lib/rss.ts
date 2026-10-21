@@ -2,10 +2,7 @@ import Parser from "rss-parser";
 
 const parser = new Parser({
   customFields: {
-    item: [
-      ["media:thumbnail", "mediaThumbnail"],
-      ["content:encoded", "contentEncoded"],
-    ],
+    item: [["media:thumbnail", "mediaThumbnail"]],
   },
 });
 
@@ -27,24 +24,26 @@ export function sanitiseHtml(html: string): string {
     .replace(/\son\w+='[^']*'/gi, "");
 }
 
-// Detect paid Substack articles: content is a short teaser followed by a subscribe prompt
-function detectPaid(contentEncoded: string): boolean {
-  const lower = contentEncoded.toLowerCase();
-  return (
+// Detect paid Substack articles: content is a short teaser with a subscribe prompt
+function detectPaid(content: string): boolean {
+  const lower = content.toLowerCase();
+  if (
     lower.includes("subscribe to read") ||
     lower.includes("this post is for paid subscribers") ||
     lower.includes("this post is for paying subscribers") ||
-    lower.includes("paid subscribers only") ||
-    (contentEncoded.replace(/<[^>]+>/g, "").trim().length < 600)
-  );
+    lower.includes("paid subscribers only")
+  ) return true;
+  // If stripped text is very short, it's a teaser
+  const textOnly = content.replace(/<[^>]+>/g, "").trim();
+  return textOnly.length < 600;
 }
 
 export function normaliseSubstackItem(item: {
   title?: string;
   link?: string;
   pubDate?: string;
+  content?: string;
   contentSnippet?: string;
-  contentEncoded?: string;
   enclosure?: { url?: string };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
@@ -52,7 +51,8 @@ export function normaliseSubstackItem(item: {
   const url = item.link ?? "";
   const slugMatch = url.match(/\/p\/([^/?#]+)/);
   const slug = slugMatch?.[1] ?? url.split("/").pop() ?? "";
-  const rawContent = item.contentEncoded ?? item.content ?? "";
+  // rss-parser maps content:encoded → content by default
+  const rawContent = (item.content as string | undefined) ?? "";
   const isPaid = rawContent ? detectPaid(rawContent) : false;
   const body = rawContent ? sanitiseHtml(rawContent) : undefined;
   return {
@@ -70,23 +70,31 @@ export function normaliseSubstackItem(item: {
 }
 
 export async function fetchSubstackFeed(feedUrl: string) {
-  const feed = await parser.parseURL(feedUrl);
-  return feed.items.map(normaliseSubstackItem);
+  try {
+    const feed = await parser.parseURL(feedUrl);
+    return feed.items.map(normaliseSubstackItem);
+  } catch {
+    return [];
+  }
 }
 
 export async function fetchYoutubeFeed(channelId: string) {
-  const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-  const feed = await parser.parseURL(feedUrl);
-  return feed.items.map(item => {
-    const youtubeId = item.link ? extractYoutubeId(item.link) : null;
-    return {
-      title: item.title ?? "",
-      slug: youtubeId ?? "",
-      youtubeId: youtubeId ?? "",
-      publishedAt: item.pubDate ? new Date(item.pubDate).toISOString() : undefined,
-      description: item.contentSnippet?.slice(0, 500) ?? "",
-      thumbnailUrl: youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : undefined,
-      tags: [] as string[],
-    };
-  }).filter(v => v.youtubeId);
+  try {
+    const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+    const feed = await parser.parseURL(feedUrl);
+    return feed.items.map(item => {
+      const youtubeId = item.link ? extractYoutubeId(item.link) : null;
+      return {
+        title: item.title ?? "",
+        slug: youtubeId ?? "",
+        youtubeId: youtubeId ?? "",
+        publishedAt: item.pubDate ? new Date(item.pubDate).toISOString() : undefined,
+        description: item.contentSnippet?.slice(0, 500) ?? "",
+        thumbnailUrl: youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : undefined,
+        tags: [] as string[],
+      };
+    }).filter(v => v.youtubeId);
+  } catch {
+    return [];
+  }
 }
