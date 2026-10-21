@@ -2,6 +2,7 @@ import { getPostBySlug, getLatestPosts, getRelatedPosts } from "@/lib/sanity";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import ReadingTracker from "@/components/ReadingTracker";
+import { getMemberSession } from "@/lib/member-session";
 import type { Metadata } from "next";
 
 export const revalidate = 1800;
@@ -39,6 +40,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   if (!post) notFound();
 
   const related = await getRelatedPosts(post.tags, post._id);
+  const session = await getMemberSession();
+  const isPaidMember = session?.tier === "paid";
   const date = new Date(post.publishedAt).toLocaleDateString("en-GB", {
     day: "numeric", month: "long", year: "numeric",
   });
@@ -80,20 +83,25 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           />
         )}
 
-        {post.isPaid ? (
-          /* Paywall */
+        {post.isPaid && !isPaidMember ? (
+          /* Paywall — shown to non-paid visitors */
           <div className="border-l-4 border-[#D72638] pl-6 py-2 my-8 bg-[#FFF5F5]">
             <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#D72638] mb-3">
               Subscriber content
             </p>
             <p className="text-sm font-[var(--font-lato)] text-[#4B5563] mb-4 leading-relaxed">
-              This article is for paid subscribers. Subscribe on Substack for £5/month to access the full piece and complete archive.
+              This article is for paid subscribers. Join for £5/month to access the full piece and complete archive.
             </p>
-            <a href={post.substackUrl ?? "https://james1940.substack.com/subscribe"}
-              target="_blank" rel="noopener noreferrer"
-              className="inline-block px-5 py-2.5 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
-              Subscribe to read — £5/month
-            </a>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link href="/join"
+                className="inline-block px-5 py-2.5 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
+                Join for £5/month
+              </Link>
+              <Link href={`/member/signin?redirect=/articles/${slug}`}
+                className="inline-block px-5 py-2.5 border border-[#E5E7EB] text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#6B7280] hover:border-[#111111] hover:text-[#111111] transition-colors">
+                Already a subscriber? Sign in
+              </Link>
+            </div>
           </div>
         ) : bodyText ? (
           /* Full article content rendered inline */
@@ -121,14 +129,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               James Holland writes every week on WW2 history, strategy, and research. Free to read. No algorithm.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
-              <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+              <Link href="/subscribe"
                 className="inline-block px-6 py-2.5 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
                 Subscribe free
-              </a>
-              <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+              </Link>
+              <Link href="/join"
                 className="inline-block px-6 py-2.5 border border-[#E5E7EB] text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#6B7280] hover:border-[#111111] hover:text-[#111111] transition-colors">
                 £5/month for full archive
-              </a>
+              </Link>
             </div>
           </div>
         )}

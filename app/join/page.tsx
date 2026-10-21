@@ -1,5 +1,6 @@
 import { getLatestPosts } from "@/lib/sanity";
 import Link from "next/link";
+import { getMemberSession } from "@/lib/member-session";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -14,11 +15,12 @@ const INCLUSIONS = [
   { label: "Monthly Q&A dispatches", detail: "James answers subscriber questions on history and research" },
   { label: "Deep dive series", detail: "Multi-part investigations into specific campaigns and battles" },
   { label: "Early chapters", detail: "First access to material from upcoming books" },
-  { label: "Cancel any time", detail: "No lock-in. Cancel from your Substack account in seconds" },
+  { label: "Cancel any time", detail: "No lock-in. Cancel from your account in seconds" },
 ];
 
 export default async function JoinPage() {
   const posts = await getLatestPosts(3);
+  const session = await getMemberSession();
   const paidPosts = posts.filter(p => p.isPaid).slice(0, 3);
   const previewPosts = paidPosts.length > 0 ? paidPosts : posts.slice(0, 3);
 
@@ -38,13 +40,21 @@ export default async function JoinPage() {
           exclusive essays, and direct access to James Holland's original research — material
           that doesn't appear anywhere else.
         </p>
-        <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+        <a href="https://ww2-and-all-that.ghost.io/#/portal/signup"
           className="inline-block px-8 py-3 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98] mr-4">
           Start for £5/month
         </a>
         <p className="text-[11px] font-[var(--font-barlow)] text-white/40 tracking-wide mt-4">
           Cancel any time. No contracts.
         </p>
+        {session?.tier !== "paid" && (
+          <p className="text-[11px] font-[var(--font-barlow)] text-white/40 tracking-wide mt-2">
+            Already a subscriber?{" "}
+            <Link href="/member/signin" className="text-white/70 hover:text-white transition-colors underline underline-offset-2">
+              Sign in to access your account
+            </Link>
+          </p>
+        )}
       </header>
 
       {/* What's included */}
@@ -113,7 +123,7 @@ export default async function JoinPage() {
           <p className="text-sm font-[var(--font-lato)] text-[#6B7280]">Full access. Cancel any time.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
-          <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+          <a href="https://ww2-and-all-that.ghost.io/#/portal/signup"
             className="inline-block px-8 py-3 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
             Start subscription
           </a>
