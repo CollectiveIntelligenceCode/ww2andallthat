@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/videos", label: "Videos" },
   { href: "/books", label: "Books" },
   { href: "/events", label: "Events" },
+  { href: "/about", label: "About" },
 ];
 
 function todayLabel() {
@@ -33,7 +34,16 @@ export default function Nav() {
             className="font-[var(--font-baskerville)] text-2xl md:text-[1.75rem] font-bold tracking-tight text-[#111111] text-center flex-1 md:flex-none leading-none">
             WW2 &amp; All That
           </Link>
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
+            {/* Search icon */}
+            <Link href="/search"
+              className="hidden md:flex items-center justify-center w-7 h-7 text-[#9CA3AF] hover:text-[#D72638] transition-colors"
+              aria-label="Search">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </Link>
             <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
               className="hidden md:inline-block px-4 py-1.5 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase bg-[#D72638] text-white hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
               Subscribe
@@ -74,6 +84,14 @@ export default function Nav() {
               {l.label}
             </Link>
           ))}
+          <Link href="/search" onClick={() => setOpen(false)}
+            className="block px-6 py-3 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#111111] border-b border-[#E5E7EB] hover:text-[#D72638] transition-colors">
+            Search
+          </Link>
+          <Link href="/profile" onClick={() => setOpen(false)}
+            className="block px-6 py-3 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#111111] border-b border-[#E5E7EB] hover:text-[#D72638] transition-colors">
+            My record
+          </Link>
           <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
             className="block px-6 py-3 text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#D72638]">
             Subscribe →
