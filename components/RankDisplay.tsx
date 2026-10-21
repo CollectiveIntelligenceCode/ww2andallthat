@@ -9,12 +9,21 @@ export default function RankDisplay() {
 
   useEffect(() => {
     setCount(getReadArticles().length);
-    // Refresh when storage changes (e.g. user reads an article in another tab)
-    const handler = () => setCount(getReadArticles().length);
-    window.addEventListener("storage", handler);
-    // Also poll every 15s in case ReadingTracker fires in same tab
-    const poll = setInterval(handler, 15_000);
-    return () => { window.removeEventListener("storage", handler); clearInterval(poll); };
+
+    const refresh = () => setCount(getReadArticles().length);
+
+    // Instant update when article read fires in this tab
+    window.addEventListener("ww2:article-read", refresh);
+    // Cross-tab sync via storage event
+    window.addEventListener("storage", refresh);
+    // Fallback poll
+    const poll = setInterval(refresh, 15_000);
+
+    return () => {
+      window.removeEventListener("ww2:article-read", refresh);
+      window.removeEventListener("storage", refresh);
+      clearInterval(poll);
+    };
   }, []);
 
   if (count === 0) return null;

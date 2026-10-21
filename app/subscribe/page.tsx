@@ -38,9 +38,12 @@ export default async function SubscribePage() {
         <h1 className="font-[var(--font-baskerville)] text-4xl md:text-5xl font-bold leading-[1.1] mb-6 text-balance">
           History told without compromise.
         </h1>
-        <p className="text-base font-[var(--font-lato)] text-[#6B7280] leading-relaxed mb-8 max-w-md mx-auto">
+        <p className="text-base font-[var(--font-lato)] text-[#6B7280] leading-relaxed mb-4 max-w-md mx-auto">
           James Holland writes about World War Two every week — analysis, narrative, and original
-          research. Free to read. No algorithm. No noise.
+          research. Every article is readable in full right here. No algorithm. No noise.
+        </p>
+        <p className="text-sm font-[var(--font-lato)] text-[#9CA3AF] mb-8 max-w-xs mx-auto">
+          Subscribe to get new pieces in your inbox the moment they publish.
         </p>
         <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
           className="inline-block px-8 py-3 bg-[#111111] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#D72638] transition-colors active:scale-[0.98]">

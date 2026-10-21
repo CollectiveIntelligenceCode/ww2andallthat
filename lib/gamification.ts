@@ -36,8 +36,14 @@ export function markArticleRead(slug: string): void {
   try {
     const read = getReadArticles();
     if (!read.includes(slug)) {
-      localStorage.setItem("ww2_read", JSON.stringify([...read, slug]));
+      const prevRank = getRank(read.length).name;
+      const newRead = [...read, slug];
+      localStorage.setItem("ww2_read", JSON.stringify(newRead));
       updateStreak();
+      const newRank = getRank(newRead.length).name;
+      window.dispatchEvent(new CustomEvent("ww2:article-read", {
+        detail: { count: newRead.length, prevRank, newRank, rankUp: newRank !== prevRank },
+      }));
     }
   } catch {}
 }

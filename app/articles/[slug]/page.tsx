@@ -108,6 +108,31 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </p>
         ) : null}
 
+        {/* Post-article subscribe CTA — shown after free article body */}
+        {!post.isPaid && bodyText && (
+          <div className="my-12 border-t-2 border-b-2 border-[#111111] py-8">
+            <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#D72638] mb-3">
+              Free dispatches · Every week
+            </p>
+            <h3 className="font-[var(--font-baskerville)] text-2xl font-bold mb-3 max-w-sm">
+              Get the next dispatch in your inbox.
+            </h3>
+            <p className="text-sm font-[var(--font-lato)] text-[#6B7280] mb-5 max-w-sm leading-relaxed">
+              James Holland writes every week on WW2 history, strategy, and research. Free to read. No algorithm.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+                className="inline-block px-6 py-2.5 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
+                Subscribe free
+              </a>
+              <a href="https://james1940.substack.com/subscribe" target="_blank" rel="noopener noreferrer"
+                className="inline-block px-6 py-2.5 border border-[#E5E7EB] text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#6B7280] hover:border-[#111111] hover:text-[#111111] transition-colors">
+                £5/month for full archive
+              </a>
+            </div>
+          </div>
+        )}
+
         {/* Substack attribution for free articles */}
         {!post.isPaid && post.substackUrl && (
           <div className="mt-10 pt-6 border-t border-[#E5E7EB] flex items-center justify-between gap-4">

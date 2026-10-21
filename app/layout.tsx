@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Libre_Baskerville, Barlow_Condensed, Lato } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import RankUpToast from "@/components/RankUpToast";
 import "./globals.css";
 
 const baskerville = Libre_Baskerville({
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Nav />
         <main>{children}</main>
         <Footer />
+        <RankUpToast />
       </body>
     </html>
   );
