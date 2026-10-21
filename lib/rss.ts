@@ -42,7 +42,6 @@ export function normaliseSubstackItem(item: {
   title?: string;
   link?: string;
   pubDate?: string;
-  content?: string;
   contentSnippet?: string;
   enclosure?: { url?: string };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,8 +50,8 @@ export function normaliseSubstackItem(item: {
   const url = item.link ?? "";
   const slugMatch = url.match(/\/p\/([^/?#]+)/);
   const slug = slugMatch?.[1] ?? url.split("/").pop() ?? "";
-  // rss-parser maps content:encoded → content by default
-  const rawContent = (item.content as string | undefined) ?? "";
+  // Substack puts full HTML in content:encoded (not content, which is just the title)
+  const rawContent = (item["content:encoded"] as string | undefined) ?? "";
   const isPaid = rawContent ? detectPaid(rawContent) : false;
   const body = rawContent ? sanitiseHtml(rawContent) : undefined;
   return {
