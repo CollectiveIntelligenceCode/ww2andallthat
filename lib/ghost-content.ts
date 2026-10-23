@@ -161,3 +161,105 @@ export async function ghostHasContent(): Promise<boolean> {
   const raw = await fetchGhost("posts", { limit: "1" });
   return raw.length > 0;
 }
+
+// ── Ghost Pages (books, events) ───────────────────────────────────────────────
+
+interface GhostPage {
+  id: string;
+  title: string;
+  slug: string;
+  html?: string | null;
+  feature_image?: string | null;
+  published_at: string;
+  custom_excerpt?: string | null;
+  tags?: GhostTag[];
+}
+
+interface GhostPageResponse {
+  pages?: GhostPage[];
+}
+
+async function fetchGhostPages(
+  params: Record<string, string> = {},
+): Promise<GhostPage[]> {
+  if (!GHOST_KEY) return [];
+  const url = new URL(`${GHOST_URL}/ghost/api/content/pages/`);
+  url.searchParams.set("key", GHOST_KEY);
+  url.searchParams.set("include", "tags");
+  url.searchParams.set("formats", "html");
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+  try {
+    const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
+    if (!res.ok) return [];
+    const json = await res.json() as GhostPageResponse;
+    return json.pages ?? [];
+  } catch {
+    return [];
+  }
+}
+
+function extractLinks(html: string): string[] {
+  const matches = html.matchAll(/href="([^"]+)"/g);
+  return [...matches].map(m => m[1]).filter(href => href.startsWith("http"));
+}
+
+export interface GhostBook {
+  id: string;
+  title: string;
+  slug: string;
+  coverImage?: string;
+  excerpt?: string;
+  releaseYear?: string;
+  buyLinkAmazon?: string;
+  buyLinkSigned?: string;
+}
+
+export async function getGhostBooks(): Promise<GhostBook[]> {
+  const pages = await fetchGhostPages({ filter: "tag:book", limit: "50", order: "published_at desc" });
+  if (!pages.length) return [];
+  return pages.map(p => {
+    const links = extractLinks(p.html ?? "");
+    const amazonLink = links.find(l => l.includes("amazon"));
+    const signedLink = links.find(l => !l.includes("amazon") && (l.includes("signed") || l.includes("waterstones") || l.includes("hive")));
+    return {
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      coverImage: p.feature_image ?? undefined,
+      excerpt: p.custom_excerpt ?? undefined,
+      releaseYear: p.published_at ? new Date(p.published_at).getFullYear().toString() : undefined,
+      buyLinkAmazon: amazonLink,
+      buyLinkSigned: signedLink,
+    };
+  });
+}
+
+export interface GhostEvent {
+  id: string;
+  title: string;
+  slug: string;
+  date: string;
+  location?: string;
+  description?: string;
+  ticketUrl?: string;
+  isPast: boolean;
+}
+
+export async function getGhostEvents(): Promise<GhostEvent[]> {
+  const pages = await fetchGhostPages({ filter: "tag:event", limit: "50", order: "published_at asc" });
+  if (!pages.length) return [];
+  const now = new Date();
+  return pages.map(p => {
+    const links = extractLinks(p.html ?? "");
+    return {
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      date: p.published_at,
+      location: p.custom_excerpt ?? undefined,
+      description: p.html ? p.html.replace(/<[^>]+>/g, " ").trim().slice(0, 300) : undefined,
+      ticketUrl: links[0],
+      isPast: new Date(p.published_at) < now,
+    };
+  });
+}

@@ -8,6 +8,8 @@ import {
   getGhostPost,
   getRelatedGhostPosts,
   ghostHasContent,
+  getGhostBooks,
+  getGhostEvents,
 } from "./ghost-content";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "placeholder";
@@ -151,7 +153,22 @@ export async function getLatestVideos(limit = 12): Promise<Video[]> {
 }
 
 export async function getBooks(): Promise<Book[]> {
-  if (!isSanityReady) return SEED_BOOKS;
+  if (!isSanityReady) {
+    const ghostBooks = await getGhostBooks();
+    if (ghostBooks.length) {
+      return ghostBooks.map(b => ({
+        _id: b.id,
+        title: b.title,
+        slug: { current: b.slug },
+        cover: b.coverImage ? { asset: { url: b.coverImage } } : undefined,
+        excerpt: b.excerpt,
+        releaseDate: b.releaseYear,
+        buyLinkAmazon: b.buyLinkAmazon,
+        buyLinkSigned: b.buyLinkSigned,
+      }));
+    }
+    return SEED_BOOKS;
+  }
   return sanityClient.fetch(
     `*[_type == "book"] | order(releaseDate desc) {
       _id, title, slug, cover { asset->{ url } }, excerpt, releaseDate, buyLinkAmazon, buyLinkSigned
@@ -160,7 +177,22 @@ export async function getBooks(): Promise<Book[]> {
 }
 
 export async function getEvents(): Promise<SanityEvent[]> {
-  if (!isSanityReady) return SEED_EVENTS;
+  if (!isSanityReady) {
+    const ghostEvents = await getGhostEvents();
+    if (ghostEvents.length) {
+      return ghostEvents.map(e => ({
+        _id: e.id,
+        title: e.title,
+        slug: { current: e.slug },
+        date: e.date,
+        location: e.location,
+        description: e.description,
+        ticketUrl: e.ticketUrl,
+        isPast: e.isPast,
+      }));
+    }
+    return SEED_EVENTS;
+  }
   return sanityClient.fetch(
     `*[_type == "event"] | order(date asc) {
       _id, title, slug, date, location, description, ticketUrl, isPast

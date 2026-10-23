@@ -2,6 +2,7 @@ import { getLatestPosts } from "@/lib/sanity";
 import Link from "next/link";
 import type { Metadata } from "next";
 import FreeSubscribeForm from "@/components/FreeSubscribeForm";
+import { SITE_CONFIG } from "@/lib/config";
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
@@ -22,6 +23,13 @@ const PAID_BENEFITS = [
   "Long-form investigations and original research",
   "Monthly Q&A dispatches",
   "Early access to new book chapters",
+];
+
+const FOUNDING_EXTRAS = [
+  "Founding Member badge on your profile",
+  "Founding-only dispatches and raw research notes",
+  "Direct access — submit questions for James",
+  `Limited to ${SITE_CONFIG.foundingCapacity} members worldwide`,
 ];
 
 export default async function SubscribePage() {
@@ -84,24 +92,22 @@ export default async function SubscribePage() {
         </section>
       )}
 
-      {/* Free vs Paid comparison */}
-      <section className="border-t-2 border-[#111111] pt-10 mb-16">
+      {/* Three-tier comparison */}
+      <section className="border-t-2 border-[#111111] pt-10">
         <h2 className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#111111] mb-8">
           What you get
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[800px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
           {/* Free */}
           <div className="border border-[#E5E7EB] p-8">
-            <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#9CA3AF] mb-2">
-              Free reader
-            </p>
+            <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#9CA3AF] mb-2">Free reader</p>
             <p className="font-[var(--font-baskerville)] text-2xl font-bold mb-1">£0</p>
             <p className="text-xs font-[var(--font-barlow)] text-[#9CA3AF] tracking-wide mb-6">forever</p>
             <ul className="space-y-3 mb-8">
               {FREE_BENEFITS.map(b => (
                 <li key={b} className="flex items-start gap-3 text-sm font-[var(--font-lato)] text-[#4B5563]">
-                  <span className="text-[#D72638] mt-0.5 flex-shrink-0">✦</span>
-                  {b}
+                  <span className="text-[#D72638] mt-0.5 flex-shrink-0">✦</span>{b}
                 </li>
               ))}
             </ul>
@@ -111,29 +117,46 @@ export default async function SubscribePage() {
           {/* Paid */}
           <div className="border-2 border-[#111111] p-8 relative">
             <span className="absolute -top-3 left-6 bg-[#D72638] text-white text-[9px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase px-2 py-0.5">
-              Recommended
+              Most popular
             </span>
-            <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#9CA3AF] mb-2">
-              Paid subscriber
-            </p>
+            <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#9CA3AF] mb-2">Paid subscriber</p>
             <p className="font-[var(--font-baskerville)] text-2xl font-bold mb-1">£5</p>
-            <p className="text-xs font-[var(--font-barlow)] text-[#9CA3AF] tracking-wide mb-6">per month</p>
+            <p className="text-xs font-[var(--font-barlow)] text-[#9CA3AF] tracking-wide mb-6">per month · £50/year</p>
             <ul className="space-y-3 mb-8">
               {[...FREE_BENEFITS, ...PAID_BENEFITS].map(b => (
                 <li key={b} className="flex items-start gap-3 text-sm font-[var(--font-lato)] text-[#4B5563]">
-                  <span className="text-[#D72638] mt-0.5 flex-shrink-0">✦</span>
-                  {b}
+                  <span className="text-[#D72638] mt-0.5 flex-shrink-0">✦</span>{b}
                 </li>
               ))}
             </ul>
-            <Link href="/join"
+            <Link href={SITE_CONFIG.ghostPortalPaid} target="_blank" rel="noopener noreferrer"
               className="block text-center px-6 py-2.5 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
               Start paid subscription
             </Link>
           </div>
+
+          {/* Founding */}
+          <div className="border border-[#111111] p-8 bg-[#111111] text-white relative">
+            <span className="absolute -top-3 left-6 bg-[#D72638] text-white text-[9px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase px-2 py-0.5">
+              Limited · {SITE_CONFIG.foundingCapacity} places
+            </span>
+            <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-white/40 mb-2">Founding member</p>
+            <p className="font-[var(--font-baskerville)] text-2xl font-bold mb-1">£250</p>
+            <p className="text-xs font-[var(--font-barlow)] text-white/40 tracking-wide mb-6">per year · founding rate</p>
+            <ul className="space-y-3 mb-8">
+              {[...FREE_BENEFITS, ...PAID_BENEFITS, ...FOUNDING_EXTRAS].map(b => (
+                <li key={b} className="flex items-start gap-3 text-sm font-[var(--font-lato)] text-white/70">
+                  <span className="text-[#D72638] mt-0.5 flex-shrink-0">✦</span>{b}
+                </li>
+              ))}
+            </ul>
+            <Link href={SITE_CONFIG.ghostPortalFounding} target="_blank" rel="noopener noreferrer"
+              className="block text-center px-6 py-2.5 bg-white text-[#111111] text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#D72638] hover:text-white transition-colors active:scale-[0.98]">
+              Become a Founding Member
+            </Link>
+          </div>
         </div>
       </section>
-
     </div>
   );
 }

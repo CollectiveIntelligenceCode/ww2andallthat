@@ -2,14 +2,15 @@ import { getLatestPosts } from "@/lib/sanity";
 import Link from "next/link";
 import { getMemberSession } from "@/lib/member-session";
 import type { Metadata } from "next";
+import { SITE_CONFIG } from "@/lib/config";
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
-  title: "Join — Paid Subscription",
-  description: "Unlock the full archive. James Holland's complete WW2 writing — every article, every essay, every dispatch. £5/month.",
+  title: "Join — Subscribe",
+  description: "Join James Holland's WW2 & All That. Free dispatches, paid archive access, or become a Founding Member.",
 };
 
-const INCLUSIONS = [
+const PAID_INCLUSIONS = [
   { label: "Complete archive", detail: "Every article ever written — dating back years" },
   { label: "Subscriber-only essays", detail: "Long-form investigations not published anywhere else" },
   { label: "Monthly Q&A dispatches", detail: "James answers subscriber questions on history and research" },
@@ -18,52 +19,66 @@ const INCLUSIONS = [
   { label: "Cancel any time", detail: "No lock-in. Cancel from your account in seconds" },
 ];
 
+const FOUNDING_EXTRAS = [
+  { label: "Founding Member badge", detail: "Recognised on your profile for life" },
+  { label: "Founding-only dispatches", detail: "Raw research notes and correspondence James shares only with Founding Members" },
+  { label: "Direct access", detail: "Submit questions directly — James reads every one" },
+  { label: `Limited to ${SITE_CONFIG.foundingCapacity}`, detail: "Once these places are gone, this tier closes permanently" },
+];
+
 export default async function JoinPage() {
   const posts = await getLatestPosts(3);
   const session = await getMemberSession();
-  const paidPosts = posts.filter(p => p.isPaid).slice(0, 3);
-  const previewPosts = paidPosts.length > 0 ? paidPosts : posts.slice(0, 3);
+  const previewPosts = posts.slice(0, 3);
 
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-12">
 
-      {/* Hero — dark band */}
+      {/* Hero */}
       <header className="bg-[#111111] text-white px-10 py-14 mb-16 max-w-[800px]">
         <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#D72638] mb-4">
-          Paid subscription · £5/month
+          Membership
         </p>
         <h1 className="font-[var(--font-baskerville)] text-4xl md:text-5xl font-bold leading-[1.1] mb-6 text-balance">
           Unlock the full campaign.
         </h1>
         <p className="text-base font-[var(--font-lato)] text-white/65 leading-relaxed max-w-lg mb-8">
-          The free dispatches are just the front line. Paid subscribers get the complete archive,
-          exclusive essays, and direct access to James Holland's original research — material
-          that doesn't appear anywhere else.
+          Free dispatches cover the front line. Paid subscribers get the complete archive,
+          exclusive essays, and direct access to James Holland's original research.
+          Founding Members get everything — and a permanent place in the record.
         </p>
-        <a href="https://ww2-and-all-that.ghost.io/#/portal/signup"
-          className="inline-block px-8 py-3 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98] mr-4">
-          Start for £5/month
-        </a>
-        <p className="text-[11px] font-[var(--font-barlow)] text-white/40 tracking-wide mt-4">
-          Cancel any time. No contracts.
-        </p>
-        {session?.tier !== "paid" && (
-          <p className="text-[11px] font-[var(--font-barlow)] text-white/40 tracking-wide mt-2">
-            Already a subscriber?{" "}
+        <div className="flex flex-wrap gap-3">
+          <Link href={SITE_CONFIG.ghostPortalPaid} target="_blank" rel="noopener noreferrer"
+            className="inline-block px-8 py-3 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
+            Start for £5/month
+          </Link>
+          <Link href={SITE_CONFIG.ghostPortalFounding} target="_blank" rel="noopener noreferrer"
+            className="inline-block px-8 py-3 border border-white/30 text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:border-white hover:bg-white/10 transition-colors active:scale-[0.98]">
+            Founding Member — £250/year
+          </Link>
+        </div>
+        {!session && (
+          <p className="text-[11px] font-[var(--font-barlow)] text-white/40 tracking-wide mt-5">
+            Already a member?{" "}
             <Link href="/member/signin" className="text-white/70 hover:text-white transition-colors underline underline-offset-2">
-              Sign in to access your account
+              Sign in
             </Link>
           </p>
         )}
       </header>
 
-      {/* What's included */}
+      {/* Paid subscription */}
       <section className="border-t-2 border-[#111111] pt-10 mb-16">
-        <h2 className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#111111] mb-8">
-          What's included
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-7 max-w-[720px]">
-          {INCLUSIONS.map(item => (
+        <div className="flex items-baseline gap-4 mb-2">
+          <h2 className="font-[var(--font-baskerville)] text-2xl font-bold">Paid subscriber</h2>
+          <span className="font-[var(--font-baskerville)] text-2xl font-bold text-[#D72638]">£5/month</span>
+          <span className="text-sm font-[var(--font-lato)] text-[#9CA3AF]">or £50/year</span>
+        </div>
+        <p className="text-sm font-[var(--font-lato)] text-[#6B7280] mb-8 max-w-lg">
+          Full archive access plus subscriber-only writing. The backbone of the publication.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-7 max-w-[720px] mb-8">
+          {PAID_INCLUSIONS.map(item => (
             <div key={item.label} className="flex gap-4">
               <span className="text-[#D72638] font-[var(--font-baskerville)] text-lg mt-0.5 flex-shrink-0">✦</span>
               <div>
@@ -73,6 +88,10 @@ export default async function JoinPage() {
             </div>
           ))}
         </div>
+        <Link href={SITE_CONFIG.ghostPortalPaid} target="_blank" rel="noopener noreferrer"
+          className="inline-block px-8 py-3 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
+          Start paid subscription
+        </Link>
       </section>
 
       {/* Testimonial */}
@@ -87,11 +106,44 @@ export default async function JoinPage() {
         </p>
       </section>
 
-      {/* Preview articles (teaser of locked content) */}
+      {/* Founding member */}
+      <section className="bg-[#111111] text-white px-10 py-12 mb-16 max-w-[800px] relative">
+        <span className="absolute -top-3 left-8 bg-[#D72638] text-white text-[9px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase px-2 py-0.5">
+          Limited · {SITE_CONFIG.foundingCapacity} places
+        </span>
+        <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-white/40 mb-2">
+          Founding member
+        </p>
+        <div className="flex items-baseline gap-4 mb-2">
+          <span className="font-[var(--font-baskerville)] text-2xl font-bold">£250</span>
+          <span className="text-sm font-[var(--font-lato)] text-white/40">per year · founding rate</span>
+        </div>
+        <p className="text-sm font-[var(--font-lato)] text-white/60 mb-8 max-w-lg">
+          Everything in the paid subscription, plus a permanent place in the history of this publication.
+          Once these places are filled, this tier closes.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6 mb-8">
+          {FOUNDING_EXTRAS.map(item => (
+            <div key={item.label} className="flex gap-4">
+              <span className="text-[#D72638] font-[var(--font-baskerville)] text-lg mt-0.5 flex-shrink-0">✦</span>
+              <div>
+                <p className="font-[var(--font-baskerville)] text-base font-bold leading-snug mb-0.5">{item.label}</p>
+                <p className="text-sm font-[var(--font-lato)] text-white/50 leading-relaxed">{item.detail}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <Link href={SITE_CONFIG.ghostPortalFounding} target="_blank" rel="noopener noreferrer"
+          className="inline-block px-8 py-3 bg-white text-[#111111] text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#D72638] hover:text-white transition-colors active:scale-[0.98]">
+          Become a Founding Member
+        </Link>
+      </section>
+
+      {/* Preview articles */}
       {previewPosts.length > 0 && (
         <section className="border-t-2 border-[#111111] pt-10 mb-16">
           <h2 className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#111111] mb-8">
-            Recent subscriber dispatches
+            Recent dispatches
           </h2>
           <div className="space-y-6 max-w-[640px]">
             {previewPosts.map(post => (
@@ -104,7 +156,7 @@ export default async function JoinPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#D72638] mb-1">
-                    Subscriber
+                    {post.isPaid ? "Subscriber" : "Free"}
                   </p>
                   <p className="font-[var(--font-baskerville)] text-sm font-bold leading-snug text-[#111111]">
                     {post.title}
@@ -119,17 +171,17 @@ export default async function JoinPage() {
       {/* Final CTA */}
       <section className="border-t-2 border-[#111111] pt-10 flex flex-col sm:flex-row items-start sm:items-center gap-6">
         <div>
-          <p className="font-[var(--font-baskerville)] text-2xl font-bold mb-1">£5 / month</p>
-          <p className="text-sm font-[var(--font-lato)] text-[#6B7280]">Full access. Cancel any time.</p>
+          <p className="font-[var(--font-baskerville)] text-2xl font-bold mb-1">Start free</p>
+          <p className="text-sm font-[var(--font-lato)] text-[#6B7280]">Upgrade any time.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
-          <a href="https://ww2-and-all-that.ghost.io/#/portal/signup"
+          <Link href={SITE_CONFIG.ghostPortalSignup} target="_blank" rel="noopener noreferrer"
             className="inline-block px-8 py-3 bg-[#D72638] text-white text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase hover:bg-[#B91C2C] transition-colors active:scale-[0.98]">
-            Start subscription
-          </a>
+            Subscribe free
+          </Link>
           <Link href="/subscribe"
             className="inline-block px-8 py-3 border border-[#E5E7EB] text-[11px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#6B7280] hover:border-[#111111] hover:text-[#111111] transition-colors">
-            See free plan
+            Compare all plans
           </Link>
         </div>
       </section>
