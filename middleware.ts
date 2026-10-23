@@ -3,6 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 const SITE_PASSWORD = process.env.SITE_PASSWORD;
 
 export function middleware(req: NextRequest) {
+  // Redirect old unlock page to home
+  if (req.nextUrl.pathname.startsWith("/unlock")) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
   // No password set = gate is open (production release)
   if (!SITE_PASSWORD) return NextResponse.next();
 
