@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("token");
-  const redirect = searchParams.get("redirect") ?? "/";
+  const redirect = searchParams.get("redirect") ?? "/welcome";
 
   if (!token) {
     return Response.redirect(new URL("/member/signin?error=missing_token", request.url));

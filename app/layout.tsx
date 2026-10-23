@@ -27,10 +27,28 @@ const lato = Lato({
   display: "swap",
 });
 
+const OG_IMAGE = "https://ww2andallthat.com/og-default.jpg";
+
 export const metadata: Metadata = {
   title: { default: "WW2 & All That", template: "%s | WW2 & All That" },
   description: "History, analysis, and storytelling about World War Two by James Holland.",
   metadataBase: new URL("https://ww2andallthat.com"),
+  openGraph: {
+    type: "website",
+    siteName: "WW2 & All That",
+    title: "WW2 & All That",
+    description: "History, analysis, and storytelling about World War Two by James Holland.",
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "WW2 & All That" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@JamesHolland1940",
+    creator: "@JamesHolland1940",
+    images: [OG_IMAGE],
+  },
+  alternates: {
+    types: { "application/rss+xml": "https://ww2andallthat.com/feed.xml" },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
