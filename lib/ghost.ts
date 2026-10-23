@@ -58,41 +58,64 @@ export async function sendMagicLink(email: string, redirectUrl: string): Promise
   }
 }
 
-/** Verify a Ghost member token (from ?token= in magic-link callback) and
- *  return the member's subscription tier: "paid" | "free" | null. */
+interface GhostMemberSubscription {
+  status: string;
+  tier?: { name?: string; slug?: string };
+  plan?: { nickname?: string };
+}
+
+interface GhostMember {
+  email: string;
+  subscriptions?: GhostMemberSubscription[];
+  labels?: Array<{ name: string; slug: string }>;
+}
+
+type MemberTier = import("./types").MemberTier;
+
+function resolveTier(member: GhostMember): MemberTier {
+  const subs = member.subscriptions ?? [];
+  const active = subs.filter(s => s.status === "active");
+  if (!active.length) return "free";
+  // Check for founding tier by product slug or name
+  const isFounding = active.some(s =>
+    s.tier?.slug?.includes("founding") ||
+    s.tier?.name?.toLowerCase().includes("founding") ||
+    s.plan?.nickname?.toLowerCase().includes("founding"),
+  );
+  if (isFounding) return "founding";
+  return "paid";
+}
+
+/** Verify a Ghost member token (from ?token= in magic-link callback). */
 export async function verifyMemberToken(
   token: string,
-): Promise<{ email: string; tier: "paid" | "free" } | null> {
+): Promise<{ email: string; tier: MemberTier } | null> {
   const jwt = await ghostAdminJwt();
   const res = await fetch(
-    `${GHOST_URL}/ghost/api/admin/members/?filter=newsletters.id:-null&token=${encodeURIComponent(token)}`,
+    `${GHOST_URL}/ghost/api/admin/members/?filter=newsletters.id:-null&token=${encodeURIComponent(token)}&include=subscriptions`,
     { headers: { Authorization: `Ghost ${jwt}` } },
   );
   if (!res.ok) return null;
 
-  const data = await res.json() as { members?: Array<{ email: string; subscriptions?: Array<{ status: string }> }> };
+  const data = await res.json() as { members?: GhostMember[] };
   const member = data.members?.[0];
   if (!member) return null;
 
-  const isPaid = member.subscriptions?.some(s => s.status === "active") ?? false;
-  return { email: member.email, tier: isPaid ? "paid" : "free" };
+  return { email: member.email, tier: resolveTier(member) };
 }
 
 /** Look up a member by email and return their tier. Used server-side to gate content. */
-export async function getMemberTier(
-  email: string,
-): Promise<"paid" | "free" | null> {
+export async function getMemberTier(email: string): Promise<MemberTier | null> {
   const jwt = await ghostAdminJwt();
   const res = await fetch(
-    `${GHOST_URL}/ghost/api/admin/members/?filter=email:${encodeURIComponent(email)}`,
+    `${GHOST_URL}/ghost/api/admin/members/?filter=email:${encodeURIComponent(email)}&include=subscriptions`,
     { headers: { Authorization: `Ghost ${jwt}` } },
   );
   if (!res.ok) return null;
 
-  const data = await res.json() as { members?: Array<{ subscriptions?: Array<{ status: string }> }> };
+  const data = await res.json() as { members?: GhostMember[] };
   const member = data.members?.[0];
   if (!member) return null;
 
-  const isPaid = member.subscriptions?.some(s => s.status === "active") ?? false;
-  return isPaid ? "paid" : "free";
+  return resolveTier(member);
 }

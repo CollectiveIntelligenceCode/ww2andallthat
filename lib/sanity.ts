@@ -3,6 +3,12 @@ import { unstable_cache } from "next/cache";
 import type { Post, Video, Book, SanityEvent } from "./types";
 import { fetchSubstackFeed, fetchYoutubeFeed } from "./rss";
 import { SEED_BOOKS, SEED_EVENTS } from "./seed-data";
+import {
+  getGhostPosts,
+  getGhostPost,
+  getRelatedGhostPosts,
+  ghostHasContent,
+} from "./ghost-content";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "placeholder";
 
@@ -18,7 +24,7 @@ const isSanityReady = projectId !== "placeholder";
 const SUBSTACK_FEED = "https://james1940.substack.com/feed";
 const YOUTUBE_CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID ?? "UCNZ6VMrmina1IkAZ9VkXJPQ";
 
-// Cache live Substack RSS for 1 hour
+// Cache live Substack RSS for 1 hour (fallback when Ghost has no content yet)
 const getLiveSubstackPosts = unstable_cache(
   async (): Promise<Post[]> => {
     const items = await fetchSubstackFeed(SUBSTACK_FEED);
@@ -31,12 +37,24 @@ const getLiveSubstackPosts = unstable_cache(
       substackUrl: item.substackUrl,
       coverImage: item.coverImage,
       isPaid: item.isPaid,
+      requiredTier: item.isPaid ? ("paid" as const) : null,
       featured: i === 0,
       tags: item.tags,
       body: item.body,
     }));
   },
   ["substack-posts"],
+  { revalidate: 3600 }
+);
+
+// Ghost is primary; Substack RSS is the fallback until Paul completes the migration.
+const getLivePosts = unstable_cache(
+  async (): Promise<Post[]> => {
+    const hasGhost = await ghostHasContent();
+    if (hasGhost) return getGhostPosts(200);
+    return getLiveSubstackPosts();
+  },
+  ["live-posts"],
   { revalidate: 3600 }
 );
 
@@ -61,8 +79,8 @@ const getLiveYoutubeVideos = unstable_cache(
 
 export async function getFeaturedPost(): Promise<Post | null> {
   if (!isSanityReady) {
-    const posts = await getLiveSubstackPosts();
-    return posts[0] ?? null;
+    const posts = await getLivePosts();
+    return posts.find(p => p.featured) ?? posts[0] ?? null;
   }
   const featured = await sanityClient.fetch<Post | null>(
     `*[_type == "post" && featured == true] | order(publishedAt desc) [0] {
@@ -79,7 +97,7 @@ export async function getFeaturedPost(): Promise<Post | null> {
 
 export async function getLatestPosts(limit = 12): Promise<Post[]> {
   if (!isSanityReady) {
-    const posts = await getLiveSubstackPosts();
+    const posts = await getLivePosts();
     return posts.slice(0, limit);
   }
   return sanityClient.fetch(
@@ -91,7 +109,10 @@ export async function getLatestPosts(limit = 12): Promise<Post[]> {
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   if (!isSanityReady) {
-    const posts = await getLiveSubstackPosts();
+    // Try Ghost direct lookup first (faster than scanning full list)
+    const ghost = await getGhostPost(slug);
+    if (ghost) return ghost;
+    const posts = await getLivePosts();
     return posts.find(p => p.slug.current === slug) ?? null;
   }
   return sanityClient.fetch(
@@ -104,7 +125,9 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
 export async function getRelatedPosts(tags: string[], excludeId: string): Promise<Post[]> {
   if (!isSanityReady) {
-    const posts = await getLiveSubstackPosts();
+    const related = await getRelatedGhostPosts(tags, excludeId, 3);
+    if (related.length) return related;
+    const posts = await getLivePosts();
     return posts.filter(p => p._id !== excludeId).slice(0, 3);
   }
   return sanityClient.fetch(

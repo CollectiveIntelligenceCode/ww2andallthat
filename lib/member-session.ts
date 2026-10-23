@@ -1,7 +1,7 @@
-// Read the ghost_member cookie server-side (RSC / route handlers).
 import { cookies } from "next/headers";
+import type { MemberTier } from "./types";
 
-export type MemberSession = { email: string; tier: "paid" | "free" } | null;
+export type MemberSession = { email: string; tier: MemberTier } | null;
 
 export async function getMemberSession(): Promise<MemberSession> {
   const cookieStore = await cookies();
@@ -12,4 +12,12 @@ export async function getMemberSession(): Promise<MemberSession> {
   } catch {
     return null;
   }
+}
+
+/** Returns true if the session tier meets or exceeds the required tier. */
+export function canAccess(session: MemberSession, requiredTier?: MemberTier | null): boolean {
+  if (!requiredTier) return true;
+  if (!session) return false;
+  const rank: Record<MemberTier, number> = { free: 1, paid: 2, founding: 3 };
+  return (rank[session.tier] ?? 0) >= (rank[requiredTier] ?? 0);
 }
