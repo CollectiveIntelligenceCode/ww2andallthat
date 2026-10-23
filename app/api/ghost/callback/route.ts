@@ -1,8 +1,8 @@
 // Ghost magic-link callback: ?token=xxx&redirect=/articles/foo
-// Verifies the token, sets a session cookie, redirects the user.
+// Verifies the token, sets a session cookie, applies referral label if present.
 export const runtime = "nodejs";
 
-import { verifyMemberToken } from "@/lib/ghost";
+import { verifyMemberToken, getMemberProfile, addReferralLabel } from "@/lib/ghost";
 import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
@@ -20,12 +20,22 @@ export async function GET(request: Request) {
   }
 
   const cookieStore = await cookies();
-  // Store email + tier in a signed-ish cookie (httpOnly so JS can't read it)
+
+  // Apply referral label if this sign-in came via a referral link
+  const referrerId = cookieStore.get("ww2_ref")?.value;
+  if (referrerId && referrerId !== "") {
+    const profile = await getMemberProfile(member.email);
+    if (profile && profile.id !== referrerId) {
+      await addReferralLabel(profile.id, referrerId).catch(() => {});
+    }
+    cookieStore.delete("ww2_ref");
+  }
+
   cookieStore.set("ghost_member", JSON.stringify({ email: member.email, tier: member.tier }), {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
+    maxAge: 60 * 60 * 24 * 30,
     path: "/",
   });
 

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WW2 & All That — Platform Comparison</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: #FAFAF8; color: #1A1A18; }
+  header { border-bottom: 3px solid #1A1A18; padding: 32px 48px; }
+  header p { font-family: 'Helvetica Neue', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #9CA3AF; margin-bottom: 8px; }
+  header h1 { font-size: 28px; font-weight: 700; }
+  header .sub { font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #6B7280; margin-top: 6px; }
+  .wrap { max-width: 1300px; margin: 0 auto; padding: 40px 48px; }
+
+  /* Summary cards */
+  .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
+  .card { border: 2px solid #E5E7EB; padding: 20px; position: relative; }
+  .card.current { border-color: #1A1A18; }
+  .card.recommended { border-color: #D72638; }
+  .card .badge { position: absolute; top: -10px; left: 16px; font-family: 'Helvetica Neue', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; }
+  .card .badge.rec { background: #D72638; color: white; }
+  .card .badge.cur { background: #1A1A18; color: white; }
+  .card h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .card .fee { font-family: 'Helvetica Neue', sans-serif; font-size: 28px; font-weight: 700; color: #D72638; margin: 12px 0 4px; }
+  .card .fee-label { font-family: 'Helvetica Neue', sans-serif; font-size: 10px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.1em; }
+  .card .at-scale { font-family: 'Helvetica Neue', sans-serif; font-size: 11px; color: #6B7280; margin-top: 8px; padding-top: 8px; border-top: 1px solid #E5E7EB; }
+  .card .at-scale strong { color: #1A1A18; }
+
+  /* Comparison table */
+  h2.section { font-size: 10px; font-family: 'Helvetica Neue', sans-serif; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #1A1A18; border-top: 2px solid #1A1A18; padding-top: 16px; margin-bottom: 24px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 48px; }
+  thead th { font-family: 'Helvetica Neue', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 16px; background: #1A1A18; color: white; text-align: left; }
+  thead th:first-child { background: #1A1A18; }
+  thead th.rec-col { background: #D72638; }
+  tbody tr { border-bottom: 1px solid #E5E7EB; }
+  tbody tr:hover { background: #F5F3EE; }
+  tbody td { padding: 12px 16px; font-size: 13px; vertical-align: top; }
+  tbody td:first-child { font-family: 'Helvetica Neue', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6B7280; width: 160px; }
+  .yes { color: #16A34A; font-weight: 700; }
+  .no { color: #DC2626; font-weight: 700; }
+  .partial { color: #D97706; font-weight: 600; }
+  .note { font-family: 'Helvetica Neue', sans-serif; font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+
+  /* Recommendation */
+  .rec-box { background: #1A1A18; color: white; padding: 40px; margin-bottom: 48px; }
+  .rec-box p.label { font-family: 'Helvetica Neue', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #D72638; margin-bottom: 12px; }
+  .rec-box h3 { font-size: 22px; font-weight: 700; margin-bottom: 16px; }
+  .rec-box p { font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 10px; }
+  .rec-box .phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 24px; }
+  .rec-box .phase { border-left: 3px solid #D72638; padding-left: 16px; }
+  .rec-box .phase h4 { font-size: 13px; font-weight: 700; color: white; margin-bottom: 6px; }
+  .rec-box .phase p { font-size: 12px; margin-bottom: 0; }
+
+  /* Migration cost */
+  .migration { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
+  .migration-card { border: 1px solid #E5E7EB; padding: 24px; }
+  .migration-card h4 { font-family: 'Helvetica Neue', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #6B7280; margin-bottom: 12px; }
+  .migration-card ul { list-style: none; }
+  .migration-card li { font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #4B5563; padding: 6px 0; border-bottom: 1px solid #F3F4F6; display: flex; gap: 8px; }
+  .migration-card li::before { content: "→"; color: #D72638; flex-shrink: 0; }
+
+  footer { border-top: 1px solid #E5E7EB; padding: 24px 48px; font-family: 'Helvetica Neue', sans-serif; font-size: 11px; color: #9CA3AF; }
+</style>
+</head>
+<body>
+<header>
+  <p>WW2 &amp; All That · Platform Strategy</p>
+  <h1>Subscription Platform Comparison</h1>
+  <p class="sub">Which platform should power James Holland's paid subscriptions long-term? Prepared 21 October 2026.</p>
+</header>
+
+<div class="wrap">
+
+  <!-- Fee summary cards -->
+  <div class="summary">
+    <div class="card current">
+      <span class="badge cur">Current</span>
+      <h2>Substack</h2>
+      <div class="fee">10%</div>
+      <div class="fee-label">of every payment</div>
+      <div class="at-scale">At 5,000 subs: <strong>£2,500/mo</strong> to Substack</div>
+    </div>
+    <div class="card recommended">
+      <span class="badge rec">Recommended</span>
+      <h2>Ghost</h2>
+      <div class="fee">0%</div>
+      <div class="fee-label">platform fee + ~1.5% Stripe</div>
+      <div class="at-scale">At 5,000 subs: <strong>~£375/mo</strong> in fees</div>
+    </div>
+    <div class="card">
+      <h2>Beehiiv</h2>
+      <div class="fee">0%</div>
+      <div class="fee-label">platform fee + ~1.5% Stripe</div>
+      <div class="at-scale">At 5,000 subs: <strong>~£375/mo</strong> in fees</div>
+    </div>
+    <div class="card">
+      <h2>Stripe Direct</h2>
+      <div class="fee">~1.5%</div>
+      <div class="fee-label">Stripe fees only</div>
+      <div class="at-scale">At 5,000 subs: <strong>~£375/mo</strong> — but build everything yourself</div>
+    </div>
+  </div>
+
+  <!-- Annual saving callout -->
+  <div style="background:#FEF2F2; border-left: 4px solid #D72638; padding: 16px 20px; margin-bottom: 48px; font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #1A1A18;">
+    <strong>Annual saving by moving off Substack at 5,000 subscribers: £25,350/year.</strong> That is roughly 2.5 months of the CI retainer, or James's entire Greece filming trip.
+  </div>
+
+  <!-- Full comparison table -->
+  <h2 class="section">Full Feature Comparison</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Substack</th>
+        <th class="rec-col">Ghost (recommended)</th>
+        <th>Beehiiv</th>
+        <th>Stripe Direct</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Platform fee</td>
+        <td><span class="no">10%</span></td>
+        <td><span class="yes">0%</span> <div class="note">£9–£25/mo hosting on Ghost.org</div></td>
+        <td><span class="yes">0%</span> <div class="note">$99/mo Scale plan for monetisation</div></td>
+        <td><span class="yes">0%</span> <div class="note">We build + host everything</div></td>
+      </tr>
+      <tr>
+        <td>Payment fees</td>
+        <td class="partial">10% + Stripe</td>
+        <td class="yes">~1.5% Stripe only</td>
+        <td class="yes">~1.5% Stripe only</td>
+        <td class="yes">~1.5% Stripe only</td>
+      </tr>
+      <tr>
+        <td>Email newsletter</td>
+        <td><span class="yes">Yes</span> — built in</td>
+        <td><span class="yes">Yes</span> — built in, excellent</td>
+        <td><span class="yes">Yes</span> — built in, very strong</td>
+        <td><span class="no">No</span> <div class="note">Need separate tool (Mailchimp etc)</div></td>
+      </tr>
+      <tr>
+        <td>Website / CMS</td>
+        <td class="partial">Basic Substack pages</td>
+        <td><span class="yes">Full CMS + themes</span></td>
+        <td class="partial">Basic web presence</td>
+        <td class="no">Not included</td>
+      </tr>
+      <tr>
+        <td>API access</td>
+        <td><span class="no">No public API</span></td>
+        <td><span class="yes">Full REST API</span> <div class="note">Can sync with ww2andallthat.com perfectly</div></td>
+        <td class="yes">Good API</td>
+        <td class="yes">Stripe API (payments only)</td>
+      </tr>
+      <tr>
+        <td>Subscriber data ownership</td>
+        <td class="partial">Exportable but Substack owns the relationship</td>
+        <td><span class="yes">100% yours</span></td>
+        <td><span class="yes">100% yours</span></td>
+        <td class="yes">100% yours</td>
+      </tr>
+      <tr>
+        <td>Migrate existing subs</td>
+        <td>—</td>
+        <td class="yes">Yes — import CSV from Substack</td>
+        <td class="yes">Yes — import CSV from Substack</td>
+        <td class="partial">Free subs only — paid billing can't move</td>
+      </tr>
+      <tr>
+        <td>Integrate with our website</td>
+        <td><span class="no">No API — can only link out</span></td>
+        <td><span class="yes">Full API — verify paid status, sync content</span></td>
+        <td class="yes">API — verify paid status</td>
+        <td class="yes">Full control</td>
+      </tr>
+      <tr>
+        <td>Paid content gating on ww2andallthat.com</td>
+        <td><span class="no">Not possible — Substack doesn't expose this</span></td>
+        <td><span class="yes">Yes — check membership via API</span></td>
+        <td class="yes">Yes</td>
+        <td class="yes">Yes — we build it</td>
+      </tr>
+      <tr>
+        <td>Discovery / built-in audience</td>
+        <td><span class="yes">Yes — Substack network effect</span></td>
+        <td class="no">No built-in discovery</td>
+        <td class="partial">Growing network</td>
+        <td class="no">No</td>
+      </tr>
+      <tr>
+        <td>Complexity to migrate</td>
+        <td>—</td>
+        <td class="partial">Medium — export subs, set up Ghost, redirect</td>
+        <td class="partial">Medium</td>
+        <td><span class="no">High — build subscription + email from scratch</span></td>
+      </tr>
+      <tr>
+        <td>Migration risk</td>
+        <td>—</td>
+        <td class="partial">Low-medium <div class="note">Free subs move easily. Paid billing needs careful handling.</div></td>
+        <td class="partial">Low-medium</td>
+        <td class="no">High</td>
+      </tr>
+      <tr>
+        <td>Setup time</td>
+        <td>—</td>
+        <td class="yes">3–5 days</td>
+        <td class="yes">3–5 days</td>
+        <td class="no">3–4 weeks</td>
+      </tr>
+      <tr>
+        <td>Cost at 1,000 paid subs/mo</td>
+        <td><span class="no">£500/mo to platform</span></td>
+        <td><span class="yes">~£100/mo (Stripe fees + hosting)</span></td>
+        <td class="yes">~£175/mo (Stripe + $99 plan)</td>
+        <td class="yes">~£75/mo (Stripe only)</td>
+      </tr>
+      <tr>
+        <td>Cost at 5,000 paid subs/mo</td>
+        <td><span class="no">£2,500/mo to platform</span></td>
+        <td><span class="yes">~£400/mo</span></td>
+        <td class="yes">~£475/mo</td>
+        <td class="yes">~£375/mo</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Recommendation -->
+  <div class="rec-box">
+    <p class="label">Recommendation</p>
+    <h3>Move to Ghost when James hits 200 paid subscribers.</h3>
+    <p>Ghost is purpose-built for exactly what James needs: a serious editorial voice with paid memberships, a proper newsletter, and a public API so the website can verify subscriber status and unlock content. It is used by serious independent publishers — The Browser, Stratechery, and others at James's level.</p>
+    <p>The migration is straightforward: export subscribers from Substack as a CSV, import to Ghost, redirect the Substack domain, and update the subscribe forms. Free subscribers move instantly. Paid subscribers need to re-enter their card details once — with a well-crafted email, conversion rate is typically 80–90%.</p>
+    <div class="phases">
+      <div class="phase">
+        <h4>Now (0–200 paid subs)</h4>
+        <p>Stay on Substack. Free subscribe now inline on the website. Paid clicks through to Substack. Don't migrate yet — the fee savings don't justify the migration effort at this scale.</p>
+      </div>
+      <div class="phase">
+        <h4>Phase 2 (200+ paid subs)</h4>
+        <p>Migrate to Ghost. 3–5 day project. Free subs imported automatically. Paid subs re-subscribe via a clear "we've moved" email. Saving: ~£100/mo at this scale, rising fast.</p>
+      </div>
+      <div class="phase">
+        <h4>Phase 3 (500+ paid subs)</h4>
+        <p>Ghost API connected to ww2andallthat.com. Paid members get full article access on-site. Substack is gone. James owns his audience completely.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Migration checklist -->
+  <h2 class="section">What a Ghost Migration Involves</h2>
+  <div class="migration">
+    <div class="migration-card">
+      <h4>What we do (CI)</h4>
+      <ul>
+        <li>Set up Ghost instance (Ghost.org managed hosting — no server to maintain)</li>
+        <li>Import subscriber CSV from Substack</li>
+        <li>Recreate James's newsletter template in Ghost</li>
+        <li>Connect Ghost API to ww2andallthat.com for paid access verification</li>
+        <li>Set up Stripe in Ghost for recurring billing</li>
+        <li>Redirect james1940.substack.com to ww2andallthat.com</li>
+        <li>Test end-to-end: subscribe, pay, access gated content on site</li>
+      </ul>
+    </div>
+    <div class="migration-card">
+      <h4>What Paul does</h4>
+      <ul>
+        <li>Export subscriber list from Substack (Settings &gt; Subscribers &gt; Export)</li>
+        <li>Approve the Ghost newsletter template design</li>
+        <li>Send the "we've moved" email to paid subscribers asking them to re-subscribe</li>
+        <li>Create Stripe account (if not already done)</li>
+        <li>Approve the new subscribe flow on ww2andallthat.com</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Prepared by Solomon · Collective Intelligence · 21 October 2026 · For Chris Bradshaw and Paul Davis
+</footer>
+</body>
+</html>

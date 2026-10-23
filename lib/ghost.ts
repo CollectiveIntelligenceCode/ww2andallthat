@@ -119,3 +119,49 @@ export async function getMemberTier(email: string): Promise<MemberTier | null> {
 
   return resolveTier(member);
 }
+
+/** Get a member's Ghost UUID and referral count. */
+export async function getMemberProfile(
+  email: string,
+): Promise<{ id: string; referralCount: number } | null> {
+  const jwt = await ghostAdminJwt();
+
+  const memberRes = await fetch(
+    `${GHOST_URL}/ghost/api/admin/members/?filter=email:${encodeURIComponent(email)}`,
+    { headers: { Authorization: `Ghost ${jwt}` } },
+  );
+  if (!memberRes.ok) return null;
+
+  const data = await memberRes.json() as { members?: Array<{ id: string }> };
+  const member = data.members?.[0];
+  if (!member) return null;
+
+  // Count members that carry a referral label from this member
+  const labelSlug = `referred-by-${member.id}`;
+  const countRes = await fetch(
+    `${GHOST_URL}/ghost/api/admin/members/?filter=labels:[${labelSlug}]&limit=1`,
+    { headers: { Authorization: `Ghost ${jwt}` } },
+  );
+  const countData = countRes.ok
+    ? (await countRes.json() as { meta?: { pagination?: { total?: number } } })
+    : null;
+  const referralCount = countData?.meta?.pagination?.total ?? 0;
+
+  return { id: member.id, referralCount };
+}
+
+/** Label a new member as having been referred by another member. */
+export async function addReferralLabel(
+  newMemberId: string,
+  referrerId: string,
+): Promise<void> {
+  const jwt = await ghostAdminJwt();
+  const slug = `referred-by-${referrerId}`;
+  await fetch(`${GHOST_URL}/ghost/api/admin/members/${newMemberId}/`, {
+    method: "PUT",
+    headers: { Authorization: `Ghost ${jwt}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      members: [{ labels: [{ slug, name: `Referred by ${referrerId.slice(0, 8)}` }] }],
+    }),
+  });
+}

@@ -30,6 +30,8 @@ export default function ProfilePage() {
   const [streak, setStreak] = useState(0);
   const [hydrated, setHydrated] = useState(false);
   const [session, setSession] = useState<{ email: string | null; tier: MemberTier | null }>({ email: null, tier: null });
+  const [referral, setReferral] = useState<{ url: string; count: number } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const load = () => {
@@ -43,7 +45,15 @@ export default function ProfilePage() {
 
     fetch("/api/ghost/session")
       .then(r => r.json())
-      .then(data => setSession(data))
+      .then(data => {
+        setSession(data);
+        if (data.email) {
+          fetch("/api/ghost/referral")
+            .then(r => r.json())
+            .then(d => { if (d.url) setReferral(d); })
+            .catch(() => {});
+        }
+      })
       .catch(() => {});
 
     return () => { window.removeEventListener("ww2:article-read", load); clearInterval(poll); };
@@ -239,6 +249,57 @@ export default function ProfilePage() {
               </>
             )}
           </div>
+
+          {/* Referral */}
+          {session.email && (
+            <div>
+              <h2 className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widets uppercase text-[#111111] mb-5 pb-2 border-b-2 border-[#111111]">
+                Refer a friend
+              </h2>
+              <p className="text-xs font-[var(--font-lato)] text-[#6B7280] leading-relaxed mb-4">
+                Share your link. Every person who joins via your link is tracked to you — useful when we launch the rewards programme.
+              </p>
+              {referral ? (
+                <>
+                  <div className="flex items-stretch border border-[#E5E7EB] mb-3">
+                    <span className="flex-1 px-3 py-2 text-[11px] font-[var(--font-lato)] text-[#6B7280] truncate bg-[#FAFAFA]">
+                      {referral.url}
+                    </span>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(referral.url);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }}
+                      className="px-3 py-2 bg-[#111111] text-white text-[10px] font-[var(--font-barlow)] font-semibold tracking-widets uppercase hover:bg-[#D72638] transition-colors flex-shrink-0">
+                      {copied ? "Copied" : "Copy"}
+                    </button>
+                  </div>
+                  <div className="flex gap-2 mb-4">
+                    <a
+                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent("I've been reading WW2 & All That by James Holland — seriously good. Join me here:")}%20${encodeURIComponent(referral.url)}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="flex-1 text-center py-2 border border-[#E5E7EB] text-[10px] font-[var(--font-barlow)] font-semibold tracking-widets uppercase text-[#6B7280] hover:border-[#111111] hover:text-[#111111] transition-colors">
+                      Share on X
+                    </a>
+                    <a
+                      href={`https://wa.me/?text=${encodeURIComponent("I've been reading WW2 & All That by James Holland — join me here: " + referral.url)}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="flex-1 text-center py-2 border border-[#E5E7EB] text-[10px] font-[var(--font-barlow)] font-semibold tracking-widets uppercase text-[#6B7280] hover:border-[#111111] hover:text-[#111111] transition-colors">
+                      WhatsApp
+                    </a>
+                  </div>
+                  {referral.count > 0 && (
+                    <p className="text-[11px] font-[var(--font-barlow)] text-[#111111]">
+                      <span className="font-bold">{referral.count}</span> {referral.count === 1 ? "person" : "people"} joined via your link
+                    </p>
+                  )}
+                </>
+              ) : (
+                <div className="h-20 bg-[#F3F4F6] animate-pulse rounded" />
+              )}
+            </div>
+          )}
 
           {/* Medals */}
           <div>
