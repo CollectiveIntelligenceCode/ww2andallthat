@@ -1,30 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const SITE_PASSWORD = process.env.SITE_PASSWORD;
-const COOKIE = "ww2_access";
 
 export function middleware(req: NextRequest) {
   // No password set = gate is open (production release)
   if (!SITE_PASSWORD) return NextResponse.next();
 
-  const { pathname } = req.nextUrl;
-
-  // Allow the unlock page and its assets through
-  if (pathname.startsWith("/unlock") || pathname.startsWith("/_next") || pathname.startsWith("/favicon")) {
-    return NextResponse.next();
+  const auth = req.headers.get("authorization");
+  if (auth) {
+    const [scheme, encoded] = auth.split(" ");
+    if (scheme === "Basic" && encoded) {
+      const [, password] = atob(encoded).split(":");
+      if (password === SITE_PASSWORD) return NextResponse.next();
+    }
   }
 
-  // Check access cookie
-  const token = req.cookies.get(COOKIE)?.value;
-  if (token === SITE_PASSWORD) return NextResponse.next();
-
-  // Redirect to unlock page, preserving intended destination
-  const url = req.nextUrl.clone();
-  url.pathname = "/unlock";
-  url.searchParams.set("from", pathname);
-  return NextResponse.redirect(url);
+  return new NextResponse("Restricted", {
+    status: 401,
+    headers: { "WWW-Authenticate": 'Basic realm="WW2 & All That"' },
+  });
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
