@@ -45,7 +45,7 @@ const getLiveSubstackPosts = unstable_cache(
       body: item.body,
     }));
   },
-  ["substack-posts"],
+  ["substack-posts-v2"],
   { revalidate: 3600, tags: ["substack-posts"] }
 );
 
@@ -56,7 +56,7 @@ const getLivePosts = unstable_cache(
     if (hasGhost) return getGhostPosts(200);
     return getLiveSubstackPosts();
   },
-  ["live-posts"],
+  ["live-posts-v2"],
   { revalidate: 3600, tags: ["live-posts"] }
 );
 
@@ -75,7 +75,7 @@ const getLiveYoutubeVideos = unstable_cache(
       tags: item.tags,
     }));
   },
-  ["youtube-videos"],
+  ["youtube-videos-v2"],
   { revalidate: 3600, tags: ["live-videos"] }
 );
 
