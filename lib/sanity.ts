@@ -50,15 +50,12 @@ const getLiveSubstackPosts = unstable_cache(
 );
 
 // Ghost is primary; Substack RSS is the fallback until Paul completes the migration.
-const getLivePosts = unstable_cache(
-  async (): Promise<Post[]> => {
-    const hasGhost = await ghostHasContent();
-    if (hasGhost) return getGhostPosts(200);
-    return getLiveSubstackPosts();
-  },
-  ["live-posts-v2"],
-  { revalidate: 3600, tags: ["live-posts"] }
-);
+// Not wrapped in unstable_cache — pages use ISR (revalidate) + revalidatePath for cache control.
+async function getLivePosts(): Promise<Post[]> {
+  const hasGhost = await ghostHasContent();
+  if (hasGhost) return getGhostPosts(200);
+  return getLiveSubstackPosts();
+}
 
 // Cache live YouTube RSS for 1 hour
 const getLiveYoutubeVideos = unstable_cache(
