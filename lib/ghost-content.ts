@@ -119,7 +119,7 @@ async function fetchGhost(
   url.searchParams.set("filter", "visibility:[public,members,paid]");
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   try {
-    const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
+    const res = await fetch(url.toString(), { cache: "no-store" });
     if (!res.ok) return [];
     const json = await res.json() as GhostResponse;
     return json.posts ?? [];
@@ -189,7 +189,7 @@ async function fetchGhostPages(
   url.searchParams.set("formats", "html");
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   try {
-    const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
+    const res = await fetch(url.toString(), { cache: "no-store" });
     if (!res.ok) return [];
     const json = await res.json() as GhostPageResponse;
     return json.pages ?? [];
