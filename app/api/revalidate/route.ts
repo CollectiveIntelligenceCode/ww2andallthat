@@ -12,9 +12,9 @@ export async function POST(request: Request) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  revalidateTag("live-posts");
-  revalidateTag("substack-posts");
-  revalidateTag("live-videos");
+  revalidateTag("live-posts", "page");
+  revalidateTag("substack-posts", "page");
+  revalidateTag("live-videos", "page");
 
   return Response.json({ ok: true, revalidated: ["live-posts", "substack-posts", "live-videos"] });
 }
