@@ -46,7 +46,7 @@ const getLiveSubstackPosts = unstable_cache(
     }));
   },
   ["substack-posts"],
-  { revalidate: 3600 }
+  { revalidate: 3600, tags: ["substack-posts"] }
 );
 
 // Ghost is primary; Substack RSS is the fallback until Paul completes the migration.
@@ -57,7 +57,7 @@ const getLivePosts = unstable_cache(
     return getLiveSubstackPosts();
   },
   ["live-posts"],
-  { revalidate: 3600 }
+  { revalidate: 3600, tags: ["live-posts"] }
 );
 
 // Cache live YouTube RSS for 1 hour
@@ -76,7 +76,7 @@ const getLiveYoutubeVideos = unstable_cache(
     }));
   },
   ["youtube-videos"],
-  { revalidate: 3600 }
+  { revalidate: 3600, tags: ["live-videos"] }
 );
 
 export async function getFeaturedPost(): Promise<Post | null> {
