@@ -12,10 +12,10 @@ export async function POST(request: Request) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  // Bust data caches
-  revalidateTag("live-posts");
-  revalidateTag("substack-posts");
-  revalidateTag("live-videos");
+  // Bust data caches (Next.js 16 revalidateTag requires type arg)
+  revalidateTag("live-posts", "page");
+  revalidateTag("substack-posts", "page");
+  revalidateTag("live-videos", "page");
 
   // Bust ISR page caches
   revalidatePath("/", "page");
