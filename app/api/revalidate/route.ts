@@ -13,9 +13,9 @@ export async function POST(request: Request) {
   }
 
   // Bust data caches
-  revalidateTag("live-posts");
-  revalidateTag("substack-posts");
-  revalidateTag("live-videos");
+  revalidateTag("live-posts", "page");
+  revalidateTag("substack-posts", "page");
+  revalidateTag("live-videos", "page");
 
   // Bust ISR page caches
   revalidatePath("/", "page");
