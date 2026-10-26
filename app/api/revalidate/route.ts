@@ -1,6 +1,6 @@
 export const runtime = "nodejs";
 
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 
 // POST /api/revalidate?secret=xxx
 // Clears all content caches so Ghost/Substack content refreshes immediately.
@@ -12,9 +12,15 @@ export async function POST(request: Request) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  revalidateTag("live-posts", "page");
-  revalidateTag("substack-posts", "page");
-  revalidateTag("live-videos", "page");
+  // Bust data caches
+  revalidateTag("live-posts");
+  revalidateTag("substack-posts");
+  revalidateTag("live-videos");
 
-  return Response.json({ ok: true, revalidated: ["live-posts", "substack-posts", "live-videos"] });
+  // Bust ISR page caches
+  revalidatePath("/", "page");
+  revalidatePath("/articles", "page");
+  revalidatePath("/videos", "page");
+
+  return Response.json({ ok: true, revalidated: ["live-posts", "substack-posts", "live-videos", "/", "/articles", "/videos"] });
 }
