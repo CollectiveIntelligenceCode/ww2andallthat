@@ -6,8 +6,6 @@ import RankDisplay from "./RankDisplay";
 
 const LINKS = [
   { href: "/articles", label: "Articles" },
-  { href: "/videos", label: "Videos" },
-  { href: "/podcast", label: "Podcast" },
   { href: "/books", label: "Books" },
   { href: "/events", label: "Events" },
   { href: "/about", label: "About" },

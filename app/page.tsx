@@ -1,6 +1,5 @@
-import { getFeaturedPost, getLatestPosts, getLatestVideos } from "@/lib/sanity";
+import { getFeaturedPost, getLatestPosts } from "@/lib/sanity";
 import ArticleCard from "@/components/ArticleCard";
-import VideoGridClient from "@/components/VideoGridClient";
 import SubscribeBand from "@/components/SubscribeBand";
 import Link from "next/link";
 import type { Post } from "@/lib/types";
@@ -42,10 +41,9 @@ function SecondTierCard({ post }: { post: Post }) {
 }
 
 export default async function HomePage() {
-  const [hero, posts, videos] = await Promise.all([
+  const [hero, posts] = await Promise.all([
     getFeaturedPost(),
     getLatestPosts(14),
-    getLatestVideos(6),
   ]);
   const remainingPosts = posts.filter(p => p._id !== hero?._id);
   const secondTier = remainingPosts.slice(0, 3);
@@ -66,22 +64,14 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Latest river + video sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2">
-          <h2 className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#111111] mb-5 pb-2 border-b-2 border-[#111111]">
-            Latest
-          </h2>
-          {riverPosts.slice(0, 8).map(post => (
-            <ArticleCard key={post._id} post={post} />
-          ))}
-        </div>
-        <div>
-          <h2 className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#111111] mb-5 pb-2 border-b-2 border-[#111111]">
-            Videos
-          </h2>
-          <VideoGridClient videos={videos} compact />
-        </div>
+      {/* Latest river */}
+      <div className="max-w-[760px]">
+        <h2 className="text-[10px] font-[var(--font-barlow)] font-semibold tracking-widest uppercase text-[#111111] mb-5 pb-2 border-b-2 border-[#111111]">
+          Latest
+        </h2>
+        {riverPosts.slice(0, 8).map(post => (
+          <ArticleCard key={post._id} post={post} />
+        ))}
       </div>
 
       <SubscribeBand />
