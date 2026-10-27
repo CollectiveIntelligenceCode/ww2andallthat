@@ -49,6 +49,15 @@ export const metadata: Metadata = {
   alternates: {
     types: { "application/rss+xml": "https://ww2andallthat.com/feed.xml" },
   },
+  appleWebApp: {
+    title: "WW2 & All That",
+    statusBarStyle: "black-translucent",
+    capable: true,
+  },
+  other: {
+    "theme-color": "#1C1A14",
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
