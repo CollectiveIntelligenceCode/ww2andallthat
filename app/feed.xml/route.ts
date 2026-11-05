@@ -13,7 +13,7 @@ export async function GET() {
   const items = publicPosts
     .map(post => {
       const pubDate = new Date(post.publishedAt).toUTCString();
-      const link = `${SITE_URL}/articles/${post.slug.current}`;
+      const link = `${SITE_URL}/essays/${post.slug.current}`;
       const desc = post.excerpt
         ? `<![CDATA[${post.excerpt}]]>`
         : "";

@@ -6,7 +6,7 @@ const BASE = "https://ww2andallthat.com";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
-    { url: `${BASE}/articles`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE}/essays`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: `${BASE}/videos`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/podcast`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/books`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const posts = await getLatestPosts(200);
     articleRoutes = posts.map(p => ({
-      url: `${BASE}/articles/${p.slug.current}`,
+      url: `${BASE}/essays/${p.slug.current}`,
       lastModified: new Date(p.publishedAt),
       changeFrequency: "monthly" as const,
       priority: 0.8,

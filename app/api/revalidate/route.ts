@@ -19,7 +19,7 @@ export async function POST(request: Request) {
 
   // Bust ISR page caches
   revalidatePath("/", "page");
-  revalidatePath("/articles", "page");
+  revalidatePath("/essays", "page");
   revalidatePath("/videos", "page");
 
   return Response.json({ ok: true, revalidated: ["live-posts", "substack-posts", "live-videos", "/", "/articles", "/videos"] });
