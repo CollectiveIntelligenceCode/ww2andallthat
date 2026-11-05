@@ -8,15 +8,16 @@ import { cookies } from "next/headers";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("token");
-  const redirect = searchParams.get("redirect") ?? "/welcome";
+  const rawRedirect = searchParams.get("redirect");
+  const redirect = rawRedirect && rawRedirect.startsWith("/") && !rawRedirect.startsWith("//") ? rawRedirect : "/welcome";
 
   if (!token) {
-    return Response.redirect(new URL("/member/signin?error=missing_token", request.url));
+    return Response.redirect(new URL("/sign-in?error=missing_token", request.url));
   }
 
   const member = await verifyMemberToken(token);
   if (!member) {
-    return Response.redirect(new URL("/member/signin?error=invalid_token", request.url));
+    return Response.redirect(new URL("/sign-in?error=invalid_token", request.url));
   }
 
   const cookieStore = await cookies();

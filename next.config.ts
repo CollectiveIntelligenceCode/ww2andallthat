@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       { source: "/podcast", destination: "/articles", permanent: false },
     ];
   },
+  outputFileTracingIncludes: { "/**": ["./lib/wireframes/pages/**"] },
   cacheComponents: false,
   partialPrefetching: false,
   turbopack: {

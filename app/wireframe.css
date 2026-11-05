@@ -1,0 +1,12 @@
+/* Per-page wireframe CSS is inlined with each page, scoped by [data-wf]. */
+body{margin:0}
+/* Real Ghost essay bodies inside the wireframe .body slot */
+[data-wf] .body h2{font-size:26px;font-weight:800;line-height:1.2;margin-top:12px}
+[data-wf] .body h3{font-size:21px;font-weight:700;line-height:1.25;margin-top:8px}
+[data-wf] .body img{max-width:100%;height:auto;display:block}
+[data-wf] .body figure{margin:8px 0;display:flex;flex-direction:column;gap:8px}
+[data-wf] .body figcaption{font-size:12px;color:#666;letter-spacing:.04em;text-transform:uppercase}
+[data-wf] .body blockquote{margin:0;padding:4px 0 4px 18px;border-left:3px solid #1A1A1A;font-size:20px;line-height:1.4}
+[data-wf] .body ul,[data-wf] .body ol{margin:0;padding-left:22px;font-size:18px;line-height:1.6}
+[data-wf] .body a{color:#2457A6;text-decoration:underline}
+[data-wf] .body hr{border:0;border-top:1px solid #DDD;width:100%}
