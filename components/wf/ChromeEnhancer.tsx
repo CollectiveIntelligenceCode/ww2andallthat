@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { observeWf } from "./observe";
+import { observeWf, leave } from "./observe";
 
 // Site-wide behaviour for the wireframe header and menus:
 // - skip link and a focusable main landmark
@@ -13,10 +13,10 @@ export default function ChromeEnhancer() {
   const router = useRouter();
 
   useEffect(() => {
-    const close = () => {
+    const close = () => leave(() => {
       if (window.history.length > 1) router.back();
       else router.push("/");
-    };
+    });
 
     const stop = observeWf(() => {
       const root = document.querySelector("[data-wf]");

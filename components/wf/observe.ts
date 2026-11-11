@@ -22,3 +22,12 @@ export function menuFor(pathname: string): string {
   const s = pathname.split("/")[1];
   return `/menus/${SECTIONS.includes(s) ? s : "latest"}`;
 }
+
+/** Plays the exit animation on the open menu or search, then runs `go`. */
+export function leave(go: () => void) {
+  const root = document.querySelector("[data-wf]");
+  const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!root || calm) { go(); return; }
+  root.classList.add("wf-leaving");
+  window.setTimeout(go, 150);
+}

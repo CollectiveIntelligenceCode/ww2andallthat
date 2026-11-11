@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { leave } from "./observe";
 
 const thumb = (r: { image: string | null }, tag: "span" | "div") =>
   r.image
@@ -71,7 +72,7 @@ export default function SearchEnhancer() {
     let timer: ReturnType<typeof setTimeout> | undefined;
     cleanups.push(() => clearTimeout(timer));
 
-    const close = () => { if (window.history.length > 1) router.back(); else router.push("/"); };
+    const close = () => leave(() => { if (window.history.length > 1) router.back(); else router.push("/"); });
     const submit = () => {
       const v = input.value.trim();
       if (!v) return;
