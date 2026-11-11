@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { menuFor } from "./observe";
 
 // Wireframe fragments are plain HTML. This gives them client-side navigation and
 // wires the header's menu and search buttons to the menu and search wireframes.
@@ -13,7 +14,7 @@ export default function LinkInterceptor() {
       const btn = t.closest("button[aria-label]");
       if (btn) {
         const l = btn.getAttribute("aria-label");
-        if (l === "Open menu") { e.preventDefault(); router.push("/menus/latest"); return; }
+        if (l === "Open menu") { e.preventDefault(); router.push(menuFor(window.location.pathname)); return; }
         if (l === "Search") { e.preventDefault(); router.push("/search/opened"); return; }
       }
       const a = t.closest("a");

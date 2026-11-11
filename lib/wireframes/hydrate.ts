@@ -72,7 +72,7 @@ const NAV: Record<string, string> = {
   About: "/about", FAQs: "/faqs", FAQ: "/faqs", Membership: "/membership", Privacy: "/privacy", Terms: "/terms",
   Cookies: "/cookies", Quizzes: "/quizzes", Documents: "/documents/malta-war-diary", Maps: "/maps",
   Downloads: "/downloads", Audio: "/audio", Galleries: "/galleries", "Log in": "/sign-in", Subscribe: "/sign-in",
-  Account: "/account", Upgrade: "/membership", "Give a year": "/gift",
+  Account: "/account", Upgrade: "/membership", Join: "/membership", "Give a year": "/gift",
 };
 
 /** Header, footer and menu links that the wireframes leave as "#" go to the page they name. */

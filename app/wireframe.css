@@ -10,3 +10,26 @@ body{margin:0}
 [data-wf] .body ul,[data-wf] .body ol{margin:0;padding-left:22px;font-size:18px;line-height:1.6}
 [data-wf] .body a{color:#2457A6;text-decoration:underline}
 [data-wf] .body hr{border:0;border-top:1px solid #DDD;width:100%}
+
+/* Accessibility and interaction states shared by every wireframe page */
+.skip-link{position:absolute;left:8px;top:-64px;z-index:2000;background:#1A1A1A;color:#fff;padding:12px 16px;font-weight:700;font-size:14px;text-decoration:none;transition:top .15s cubic-bezier(.23,1,.32,1)}
+.skip-link:focus{top:8px}
+[data-wf] a:focus-visible,[data-wf] button:focus-visible,[data-wf] input:focus-visible,[data-wf] select:focus-visible,[data-wf] textarea:focus-visible,
+[data-wf] [role="button"]:focus-visible,[data-wf] [role="link"]:focus-visible,[data-wf] [role="slider"]:focus-visible,[data-wf] main:focus-visible{outline:3px solid #2457A6;outline-offset:2px}
+[data-wf] main:focus{outline:none}
+[data-wf] .rail a:focus-visible,[data-wf] .rail [role="button"]:focus-visible{outline-color:#8FB4F0}
+[data-wf] .nav a{transition:border-color .15s cubic-bezier(.23,1,.32,1)}
+[data-wf] .nav a:hover{border-bottom-color:#999}
+[data-wf] .nav a.on,[data-wf] .nav a[aria-current="page"]{border-bottom-color:#1A1A1A}
+[data-wf] .btn,[data-wf] .icon-btn,[data-wf] .switch button{transition:transform .12s cubic-bezier(.23,1,.32,1),background-color .15s}
+[data-wf] .btn:active,[data-wf] .icon-btn:active,[data-wf] .switch button:active{transform:scale(.97)}
+[data-wf] .icon-btn:hover{background:#F0F0F0}
+[data-wf] .rail a{transition:color .15s,padding-left .15s cubic-bezier(.23,1,.32,1)}
+[data-wf] .rail a:hover{padding-left:6px}
+[data-wf] .rail-top .x{cursor:pointer}
+[data-wf] .rail-top .x:hover{color:#8FB4F0}
+[data-wf] .audio button.play{border:0;cursor:pointer;font:inherit;font-size:13px;padding:0;transition:transform .12s cubic-bezier(.23,1,.32,1)}
+[data-wf] .audio button.play:active{transform:scale(.94)}
+[data-wf] .audio .wave{min-height:6px}
+[data-wf] .audio .wave span{transition:width .2s linear}
+@media (prefers-reduced-motion:reduce){[data-wf] *,.skip-link{transition:none!important;animation:none!important}}
