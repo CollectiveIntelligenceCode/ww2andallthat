@@ -149,3 +149,28 @@ ${e.image ? img(e, `aspect-ratio:${ar}`) : `<div class="ph" style="aspect-ratio:
 </div>`;
   return html.slice(0, start) + next + html.slice(end);
 }
+
+function itemRow(e: Essay): string {
+  const thumb = e.image
+    ? img(e, "aspect-ratio:16 / 9")
+    : `<div class="ph">Essay</div>`;
+  const tag = e.paid ? `<span class="tag members">Members</span>` : `<span class="tag free">Free</span>`;
+  return `<article class="item">${thumb}<div class="card"><span class="kicker">Essay</span><h3><a href="/essays/${e.slug}">${esc(e.title)}</a></h3>${e.excerpt ? `<p>${esc(clip(e.excerpt, 160))}</p>` : ""}<div class="row"><span class="meta">${fmtDate(e.date)} · ${e.minutes} min read</span>${tag}</div></div></article>`;
+}
+
+/**
+ * Index pages (Latest, Essays): replace the whole placeholder list with every real essay, so nothing
+ * invented (future dates, fake comment counts, films that do not exist) shows next to real content.
+ * Filters and the Load more button only worked on the placeholder list, so they go too.
+ */
+export function hydrateList(html: string, essays: Essay[]): string {
+  if (!essays.length) return html;
+  const start = html.indexOf('<div class="list">');
+  if (start < 0) return html;
+  const end = blockEnd(html, start, "div");
+  let out = html.slice(0, start) + `<div class="list">${essays.map(itemRow).join("\n")}</div>` + html.slice(end);
+  out = out.replace(/<div class="chips"[\s\S]*?<\/div>\s*(?=<div class="filters">|<div class="list">)/, "");
+  out = removeBlocks(out, /<div class="filters">/, "div");
+  out = out.replace(/<div class="row" style="justify-content: center[^"]*"><a class="btn" href="#">Load more<\/a><\/div>\s*/, "");
+  return out.replace('<div class="list">', `<p class="meta">${essays.length} essays, newest first</p>\n<div class="list">`);
+}

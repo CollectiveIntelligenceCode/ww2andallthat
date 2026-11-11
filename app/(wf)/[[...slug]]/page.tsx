@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { findRoute, readFragment } from "@/lib/wireframes";
 import { getEssay, getEssays } from "@/lib/wireframes/content";
-import { hydrateCards, hydrateEssay, hydrateHero, wireNavLinks } from "@/lib/wireframes/hydrate";
+import { hydrateCards, hydrateEssay, hydrateHero, hydrateList, wireNavLinks } from "@/lib/wireframes/hydrate";
 import { resolveState } from "@/lib/wireframes/state";
 import StateBar from "@/components/wf/StateBar";
 import LinkInterceptor from "@/components/wf/LinkInterceptor";
@@ -36,6 +36,8 @@ export default async function WireframePage({ params }: Props) {
       if (route.path === "" && essays.length) {
         html = hydrateHero(html, essays[0]);
         html = hydrateCards(html, essays.slice(1));
+      } else if (route.path === "latest" || route.path === "essays") {
+        html = hydrateList(hydrateCards(html, essays), essays);
       } else {
         html = hydrateCards(html, essays);
       }
